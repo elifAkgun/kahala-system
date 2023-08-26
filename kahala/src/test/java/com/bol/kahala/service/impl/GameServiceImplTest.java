@@ -1,16 +1,13 @@
 package com.bol.kahala.service.impl;
 
+import com.bol.kahala.constant.GameConstants;
 import com.bol.kahala.model.domain.*;
 import com.bol.kahala.repository.GameRepository;
 import com.bol.kahala.service.UserService;
 import com.bol.kahala.service.exception.GameNotFoundException;
 import com.bol.kahala.service.exception.InvalidPlayerException;
-import com.bol.kahala.service.input.CreateGameServiceInput;
-import com.bol.kahala.service.input.MoveGameServiceInput;
-import com.bol.kahala.service.input.UserServiceInput;
-import com.bol.kahala.service.output.CreateGameServiceOutput;
-import com.bol.kahala.service.output.MoveGameServiceOutput;
-import com.bol.kahala.service.output.UserServiceOutput;
+import com.bol.kahala.service.input.*;
+import com.bol.kahala.service.output.*;
 import com.bol.kahala.validation.ValidationMessages;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -380,5 +377,84 @@ class GameServiceImplTest {
         assertEquals(expectedSecondUserSmallPits, actualGame.getSecondPlayer().getBoard().getSmallPits());
         assertEquals(expectedSecondUserBigPit, actualGame.getSecondPlayer().getBoard().getBigPit());
         assertEquals(expectedGameIsFinished, actualGame.isFinished());
+    }
+
+
+    @Test
+    public void givenValidGameId_whenResetGameCalled_thenGameResetAndReturned() throws GameNotFoundException {
+        // Given
+
+        Game mockedGame = getPlayedGame();
+
+        // Mock the repository to return a game with validGameId
+
+        given(gameRepository.findGameById(GAME_ID)).willReturn(mockedGame);
+
+        GameResetServiceInput resetInput = GameResetServiceInput.builder().gameId(GAME_ID).build();
+
+        // When
+        GameResetServiceOutput resetOutput = gameService.resetGame(resetInput);
+
+        // Then
+        assertThat(resetOutput.getGame()).isEqualTo(mockedGame);
+        // Check that the small pits of both players are filled with initial seeds
+        assertThat(mockedGame.getFirstPlayer().getBoard().getSmallPits())
+                .isEqualTo(List.of(6, 6, 6, 6, 6, 6));
+        assertThat(mockedGame.getSecondPlayer().getBoard().getSmallPits())
+                .isEqualTo(List.of(6, 6, 6, 6, 6, 6));
+
+        // Check that the big pits are reset to 0
+        assertThat(mockedGame.getFirstPlayer().getBoard().getBigPit()).isEqualTo(0);
+        assertThat(mockedGame.getSecondPlayer().getBoard().getBigPit()).isEqualTo(0);
+
+        // Verify that the game is saved after resetting
+        verify(gameRepository).saveGame(mockedGame);
+    }
+
+
+
+    @Test
+    public void givenInvalidGameId_whenResetGameCalled_thenThrowInvalidPlayerException() throws GameNotFoundException {
+        // Given
+        String invalidGameId = "invalidGame";
+        GameResetServiceInput resetInput = GameResetServiceInput.builder().gameId(invalidGameId).build();
+
+        // Mock the repository to throw a GameNotFoundException
+        given(gameRepository.findGameById(invalidGameId)).willThrow(GameNotFoundException.class);
+
+        // When and Then
+        assertThatThrownBy(() -> gameService.resetGame(resetInput))
+                .isInstanceOf(InvalidPlayerException.class);
+    }
+
+    @Test
+    public void givenValidGameId_whenGetGameCalled_thenRetrieveGameStatus() throws GameNotFoundException {
+        // Given
+        String gameId = "validGame";
+        GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(gameId).build();
+        Game mockGame = new Game(); // Create a mock game
+
+        // Mock the repository to return the mock game
+        given(gameRepository.findGameById(gameId)).willReturn(mockGame);
+
+        // When
+        GameStatusServiceOutput gameStatusOutput = gameService.getGame(gameStatusInput);
+
+        // Then
+        assertThat(gameStatusOutput.getGame()).isEqualTo(mockGame);
+    }
+
+    @Test
+    public void givenInvalidGameId_whenGetGameCalled_thenThrowInvalidPlayerException() throws GameNotFoundException {
+        // Given
+        String invalidGameId = "invalidGame";
+        GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(invalidGameId).build();
+
+        // Mock the repository to throw a GameNotFoundException
+        given(gameRepository.findGameById(invalidGameId)).willThrow(GameNotFoundException.class);
+
+        // When and Then
+        assertThatThrownBy(() -> gameService.getGame(gameStatusInput))
+                .isInstanceOf(InvalidPlayerException.class);
     }
 }

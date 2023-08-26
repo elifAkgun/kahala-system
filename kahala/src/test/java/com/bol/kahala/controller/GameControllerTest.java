@@ -7,9 +7,11 @@ import com.bol.kahala.service.GameService;
 import com.bol.kahala.service.exception.InvalidGameException;
 import com.bol.kahala.service.exception.InvalidPlayerException;
 import com.bol.kahala.service.input.CreateGameServiceInput;
+import com.bol.kahala.service.input.GameResetServiceInput;
 import com.bol.kahala.service.input.GameStatusServiceInput;
 import com.bol.kahala.service.input.MoveGameServiceInput;
 import com.bol.kahala.service.output.CreateGameServiceOutput;
+import com.bol.kahala.service.output.GameResetServiceOutput;
 import com.bol.kahala.service.output.GameStatusServiceOutput;
 import com.bol.kahala.service.output.MoveGameServiceOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,8 +31,7 @@ import static com.bol.kahala.helper.ErrorMessages.*;
 import static com.bol.kahala.helper.GameTestDataHelper.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.CoreMatchers.*;
 
@@ -188,7 +189,7 @@ class GameControllerTest {
         MoveGameRequest moveGameRequest = MoveGameRequest.builder().playerId(null).pitNumber(4).build();
 
         // when - action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/games/move/" + GAME_ID)
+        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(moveGameRequest)));
 
@@ -207,7 +208,7 @@ class GameControllerTest {
                 .build();
 
         // when - action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/games/move/" + GAME_ID)
+        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(moveGameRequest)));
 
@@ -227,7 +228,7 @@ class GameControllerTest {
                 .build();
         // when - action or the behaviour that we are going test
 
-        ResultActions response = mockMvc.perform(post("/games/move/" + GAME_ID)
+        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(moveGameRequest)));
 
@@ -246,7 +247,7 @@ class GameControllerTest {
                 .build();
         // when - action or the behaviour that we are going test
 
-        ResultActions response = mockMvc.perform(post("/games/move/" + GAME_ID)
+        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(moveGameRequest)));
 
@@ -264,7 +265,7 @@ class GameControllerTest {
                 .willThrow(new InvalidGameException(MOCK_MESSAGE));
 
         // when - action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/games/move/" + GAME_ID)
+        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(MoveGameRequest.builder().playerId("123")
                         .pitNumber(4).build())));
@@ -282,7 +283,7 @@ class GameControllerTest {
                 .willThrow(new InvalidPlayerException(MOCK_MESSAGE));
 
         // when - action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/games/move/" + GAME_ID)
+        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(MoveGameRequest.builder().playerId("123")
                         .pitNumber(4).build())));
@@ -370,4 +371,41 @@ class GameControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 
+    @Test
+    public void givenValidGameId_whenResetGameCalled_thenReturnOkResponse() throws Exception {
+        // Given
+        String gameId = "validGame";
+        GameResetServiceOutput resetOutput = GameResetServiceOutput.builder().game(new Game()).build();
+
+        // Mock the gameService to return the reset game output
+        given(gameService.resetGame(any(GameResetServiceInput.class))).willReturn(resetOutput);
+
+        // When and Then
+        mockMvc.perform(put("/games/" + gameId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.game").exists());
+    }
+
+    @Test
+    public void givenInvalidGameId_whenResetGameCalled_thenReturnBadRequestResponse() throws Exception {
+        // Given
+        String invalidGameId = "invalidGame";
+
+        // Mock the gameService to throw an InvalidPlayerException
+        given(gameService.resetGame(any(GameResetServiceInput.class)))
+                .willThrow(new InvalidPlayerException("Invalid game ID"));
+
+        // When and Then
+        mockMvc.perform(put("/games/" + invalidGameId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
+
+
+
+
+
+
+
