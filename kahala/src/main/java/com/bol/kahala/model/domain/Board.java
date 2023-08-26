@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @Builder
-public class Board {
+public class Board implements Serializable {
     private List<Integer> smallPits;
     private int bigPit;
 

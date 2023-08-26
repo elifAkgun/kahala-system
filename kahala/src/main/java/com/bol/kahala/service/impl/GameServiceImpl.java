@@ -97,7 +97,8 @@ public class GameServiceImpl implements GameService {
         Game game = getGame(input.getGameId());
         validateActivePlayer(input.getMovement().getPlayerId(), game.getActivePlayerId());
 
-        Player currentPlayer, opponentPlayer;
+        Player currentPlayer;
+        Player opponentPlayer;
 
         if (game.getFirstPlayer().isCurrentTurn()) {
             currentPlayer = game.getFirstPlayer();
@@ -174,7 +175,7 @@ public class GameServiceImpl implements GameService {
         try {
             return gameRepository.findGameById(gameId);
         } catch (GameNotFoundException e) {
-            logger.info("Invalid gameId: " + gameId);
+            logger.info("Invalid gameId: {}" , gameId);
             throw new InvalidGameException(validationMessages.getExceptionMessage(
                     ValidationMessages.INVALID_GAME_EXCEPTION_GAME_NOT_FOUND_MESSAGE, gameId));
         }
@@ -265,7 +266,7 @@ public class GameServiceImpl implements GameService {
         try {
             game = gameRepository.findGameById(input.getGameId());
         } catch (GameNotFoundException e) {
-            logger.info("Invalid gameId: " + input);
+            logger.info("Invalid gameId: {}" , input);
             throw new InvalidPlayerException(validationMessages.getExceptionMessage(
                     ValidationMessages.INVALID_GAME_EXCEPTION_GAME_NOT_FOUND_MESSAGE, input.getGameId()));
 

@@ -34,7 +34,7 @@ class CommonRequestTest {
     private GameService gameService;
 
     @Test
-    public void givenMalformedJsonPayload_whenGetGameCalled_thenReturnBadRequestResponse() throws Exception {
+    void givenMalformedJsonPayload_whenGetGameCalled_thenReturnBadRequestResponse() throws Exception {
         // Given
         String malformedJson = "{invalid json}";
         given(gameService.getGame(any(GameStatusServiceInput.class)))

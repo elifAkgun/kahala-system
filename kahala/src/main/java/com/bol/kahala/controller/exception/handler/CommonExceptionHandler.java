@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.Optional;
+
 @ControllerAdvice
 @Order
 public class CommonExceptionHandler {
 
     public static final String AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER = "An error happened, please try again later.";
+    public static final String UNDEFINED = "undefined";
 
     private static MethodArgumentNotValidErrorResponse getErrorDto(ObjectError error) {
         String field = error instanceof FieldError fieldError ? fieldError.getField() : null;
@@ -34,13 +37,16 @@ public class CommonExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public MethodArgumentNotValidErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
-        return ex.getBindingResult()
+        Optional<MethodArgumentNotValidErrorResponse> firstResponse = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
                 .map(CommonExceptionHandler::getErrorDto)
-                .findFirst()
-                .get();
-
+                .findFirst();
+        if (firstResponse.isPresent()) {
+            return firstResponse.get();
+        }
+        return new MethodArgumentNotValidErrorResponse(UNDEFINED,
+                UNDEFINED, UNDEFINED, AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

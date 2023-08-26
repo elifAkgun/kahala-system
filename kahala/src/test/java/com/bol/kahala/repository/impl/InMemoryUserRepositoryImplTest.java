@@ -16,7 +16,7 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 
-public class InMemoryUserRepositoryImplTest {
+class InMemoryUserRepositoryImplTest {
 
     @Mock
     private UserRepository userRepository;

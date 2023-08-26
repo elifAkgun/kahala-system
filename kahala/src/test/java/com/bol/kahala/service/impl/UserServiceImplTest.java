@@ -42,7 +42,7 @@ class UserServiceImplTest {
 
     // JUnit test for
     @Test
-    public void givenUserAlreadyExist_whenCreateUserCalled_thenReturnException() throws DuplicateUserNameException {
+     void givenUserAlreadyExist_whenCreateUserCalled_thenReturnException() throws DuplicateUserNameException {
         // given- precondition or setup
         User user = User.builder().userId("123").build();
         given(userRepository.createUser(user))
@@ -58,7 +58,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void givenValidCreateUserServiceInput_whenCreateUserCalled_thenReturnCreatedUser() throws DuplicateUserNameException {
+     void givenValidCreateUserServiceInput_whenCreateUserCalled_thenReturnCreatedUser() throws DuplicateUserNameException {
         // given- precondition or setup
         User user = User.builder().userId(USER_ID)
                 .password(PASSWORD)
@@ -78,7 +78,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void givenUserNotExist_whenGetUserCalled_thenReturnException() throws UserNotFoundException {
+     void givenUserNotExist_whenGetUserCalled_thenReturnException() throws UserNotFoundException {
         // given- precondition or setup
         User user = User.builder().userId(USER_ID)
                 .password(PASSWORD)
@@ -97,7 +97,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void givenValidUserServiceInput_whenGetUserCalled_thenReturnUser() throws UserNotFoundException {
+     void givenValidUserServiceInput_whenGetUserCalled_thenReturnUser() throws UserNotFoundException {
         // given- precondition or setup
         User user = User.builder().userId(USER_ID)
                 .password(PASSWORD)

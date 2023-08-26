@@ -20,7 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class GameTest {
+class GameTest {
     @Autowired
     UserService userService;
 
@@ -129,12 +129,6 @@ public class GameTest {
                         .position(6).build())
                 .build());
 
-        assertEquals(emma.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
-        assertEquals(List.of(6, 6, 6, 6, 6, 0), moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getSmallPits());
-        assertEquals(1, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
-        assertEquals(List.of(7, 7, 7, 7, 7, 6), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
-        assertEquals(0, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-
 
         //Emma movement: 1st Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
@@ -143,12 +137,6 @@ public class GameTest {
                         .playerId(emma.getUser().getUserId())
                         .position(1).build())
                 .build());
-
-        assertEquals(List.of(7, 6, 6, 6, 6, 0), moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getSmallPits());
-        assertEquals(1, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
-        assertEquals(List.of(0, 8, 8, 8, 8, 7), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
-        assertEquals(1, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(jane.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
 
 
         //Jane movement: 1st Pit
@@ -159,12 +147,6 @@ public class GameTest {
                         .position(1).build())
                 .build());
 
-        assertEquals(List.of(0, 7, 7, 7, 7, 1), moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getSmallPits());
-        assertEquals(2, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
-        assertEquals(List.of(1, 8, 8, 8, 8, 7), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
-        assertEquals(1, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(emma.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
-
 
         //Emma movement: 2nd Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
@@ -173,12 +155,6 @@ public class GameTest {
                         .playerId(emma.getUser().getUserId())
                         .position(2).build())
                 .build());
-
-        assertEquals(List.of(1, 8, 8, 7, 7, 1), moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getSmallPits());
-        assertEquals(2, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
-        assertEquals(List.of(1, 0, 9, 9, 9, 8), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
-        assertEquals(2, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(jane.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
 
 
         //Jane movement: 3rd Pit

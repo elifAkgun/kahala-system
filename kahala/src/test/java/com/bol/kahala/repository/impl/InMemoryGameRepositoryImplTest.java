@@ -15,7 +15,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class InMemoryGameRepositoryImplTest {
+class InMemoryGameRepositoryImplTest {
 
     @InjectMocks
     private InMemoryGameRepositoryImpl inMemoryGameRepository;
