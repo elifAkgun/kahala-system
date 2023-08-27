@@ -4,10 +4,9 @@ import com.bol.kahala.model.domain.User;
 import com.bol.kahala.repository.UserRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -47,7 +46,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(String userId) {
         if (!userMap.containsKey(userId)) {
-           return Optional.empty();
+            return Optional.empty();
         }
         return Optional.of(userMap.get(userId));
     }

@@ -47,7 +47,7 @@ class UserControllerTest {
     private UserService userService;
 
     @Test
-     void givenUserRequestHasNoValue_whenCreateUserCalled_thenReturnErrorResponse() throws Exception {
+    void givenUserRequestHasNoValue_whenCreateUserCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         UserRequest userRequest = UserRequest.builder().build();
 
@@ -63,7 +63,7 @@ class UserControllerTest {
     }
 
     @Test
-     void givenUserRequestHasNotPassword_whenCreateUserCalled_thenReturnErrorResponse() throws Exception {
+    void givenUserRequestHasNotPassword_whenCreateUserCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         UserRequest userRequest = UserRequest.builder().userName(USER_NAME).build();
 
@@ -81,7 +81,7 @@ class UserControllerTest {
     }
 
     @Test
-     void givenUserRequestHasNotUserName_whenCreateUserCalled_thenReturnErrorResponse() throws Exception {
+    void givenUserRequestHasNotUserName_whenCreateUserCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         UserRequest userRequest = UserRequest.builder().password(PASSWORD).build();
 
@@ -99,7 +99,7 @@ class UserControllerTest {
     }
 
     @Test
-     void givenValidUser_whenCreateUserThrownException_thenReturnErrorResponse() throws Exception {
+    void givenValidUser_whenCreateUserThrownException_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         UserRequest userRequest = UserRequest.builder()
                 .userName(USER_NAME).password(PASSWORD).build();
@@ -120,7 +120,7 @@ class UserControllerTest {
     }
 
     @Test
-     void givenValidUserRequest_whenCreateUserCalled_thenReturn201Created() throws Exception {
+    void givenValidUserRequest_whenCreateUserCalled_thenReturn201Created() throws Exception {
         // given- precondition or setup
         UserRequest userRequest = UserRequest.builder()
                 .userName(USER_NAME).password(PASSWORD).build();
@@ -143,7 +143,7 @@ class UserControllerTest {
     }
 
     @Test
-     void givenHighRequestLoad_whenCreatingUsers_thenResponseTimeWithinThreshold() throws Exception {
+    void givenHighRequestLoad_whenCreatingUsers_thenResponseTimeWithinThreshold() throws Exception {
         int requestCount = 1000;
         long startTime = System.currentTimeMillis();
 
@@ -176,7 +176,7 @@ class UserControllerTest {
     }
 
     @Test
-     void givenConcurrentRequests_whenCreatingUsers_thenAllRequestsSuccessful() throws Exception {
+    void givenConcurrentRequests_whenCreatingUsers_thenAllRequestsSuccessful() throws Exception {
         int concurrentRequestCount = 100;
 
         CreateUserServiceOutput createUserServiceOutput = CreateUserServiceOutput
@@ -221,7 +221,7 @@ class UserControllerTest {
     }
 
     @Test
-     void givenValidUserId_whenGetUserCalled_thenReturnUserResponse() throws Exception {
+    void givenValidUserId_whenGetUserCalled_thenReturnUserResponse() throws Exception {
         // Configure the necessary behaviors using mock objects.
         User user = User.builder().userId(USER_ID).userName(USER_NAME).build();
         given(userService.getUser(any(UserServiceInput.class)))
@@ -235,7 +235,7 @@ class UserControllerTest {
     }
 
     @Test
-     void givenInvalidUserId_whenGetUserCalled_thenReturnNotFoundResponse() throws Exception {
+    void givenInvalidUserId_whenGetUserCalled_thenReturnNotFoundResponse() throws Exception {
         // Configure the necessary behaviors using mock objects.
         given(userService.getUser(any(UserServiceInput.class)))
                 .willReturn(UserServiceOutput.builder().user(null).build());

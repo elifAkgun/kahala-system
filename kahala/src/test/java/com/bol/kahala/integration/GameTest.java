@@ -12,7 +12,6 @@ import com.bol.kahala.service.input.MoveGameServiceInput;
 import com.bol.kahala.service.output.CreateGameServiceOutput;
 import com.bol.kahala.service.output.CreateUserServiceOutput;
 import com.bol.kahala.service.output.MoveGameServiceOutput;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,7 +133,7 @@ class GameTest {
                 .build());
 
         //user1 movement: 6th Pit
-         gameService.moveGame(MoveGameServiceInput.builder()
+        gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
                         .playerId(user1.getUser().getUserId())
@@ -143,7 +142,7 @@ class GameTest {
 
 
         //user2 movement: 1st Pit
-       gameService.moveGame(MoveGameServiceInput.builder()
+        gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
                         .playerId(user2.getUser().getUserId())

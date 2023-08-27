@@ -16,8 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.bol.kahala.constant.GameConstants.SMALL_PIT_NUMBER;
 import static com.bol.kahala.constant.GameConstants.SEED_COUNT;
+import static com.bol.kahala.constant.GameConstants.SMALL_PIT_NUMBER;
 import static com.bol.kahala.helper.GameTestDataHelper.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -122,7 +122,7 @@ class GameServiceImplTest {
     }
 
     @Test
-    void givenInitialGameObject_whenMoveGameCalled_returnNextGameBoardPosition()  {
+    void givenInitialGameObject_whenMoveGameCalled_returnNextGameBoardPosition() {
         // given- precondition or setup
         String gameId = GAME_ID;
 
@@ -174,7 +174,7 @@ class GameServiceImplTest {
     }
 
     @Test
-    void givenInitialGameObject_whenMoveGameFrom6thPit_returnNextGameBoardPosition()  {
+    void givenInitialGameObject_whenMoveGameFrom6thPit_returnNextGameBoardPosition() {
         // given- precondition or setup
         String gameId = GAME_ID;
 
@@ -226,7 +226,7 @@ class GameServiceImplTest {
     }
 
     @Test
-    void givenGameWithStones_whenMoveGameCaptureOpponentStones_returnUpdatedGameBoard()  {
+    void givenGameWithStones_whenMoveGameCaptureOpponentStones_returnUpdatedGameBoard() {
         // Given
         // Initialize the board with a specific stone distribution
         List<Integer> firstPlayerSmallPits = new ArrayList<>(Arrays.asList(1, 0, 2, 0, 8, 7));
@@ -280,7 +280,7 @@ class GameServiceImplTest {
 
 
     @Test
-    void givenGameWithStones_whenMovementEndWithBigPit_thenContinueWithSameUser()  {
+    void givenGameWithStones_whenMovementEndWithBigPit_thenContinueWithSameUser() {
         // Given
         String gameId = GAME_ID;
 
@@ -338,7 +338,7 @@ class GameServiceImplTest {
 
 
     @Test
-    void givenGameWithStones_whenThereIsNoStone_thenGameOver()  {
+    void givenGameWithStones_whenThereIsNoStone_thenGameOver() {
         // Given
         String gameId = GAME_ID;
 
@@ -402,7 +402,7 @@ class GameServiceImplTest {
 
 
     @Test
-    void givenValidGameId_whenResetGameCalled_thenGameResetAndReturned()  {
+    void givenValidGameId_whenResetGameCalled_thenGameResetAndReturned() {
         // Given
 
         Game game = getPlayedGame();
@@ -433,7 +433,7 @@ class GameServiceImplTest {
 
 
     @Test
-    void givenInvalidGameId_whenResetGameCalled_thenThrowInvalidPlayerException()  {
+    void givenInvalidGameId_whenResetGameCalled_thenThrowInvalidPlayerException() {
         // Given
         String invalidGameId = "invalidGame";
         GameResetServiceInput resetInput = GameResetServiceInput.builder().gameId(invalidGameId).build();
@@ -447,7 +447,7 @@ class GameServiceImplTest {
     }
 
     @Test
-    void givenValidGameId_whenGetGameCalled_thenRetrieveGameStatus()  {
+    void givenValidGameId_whenGetGameCalled_thenRetrieveGameStatus() {
         // Given
         String gameId = GAME_ID;
         GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(gameId).build();
@@ -464,7 +464,7 @@ class GameServiceImplTest {
     }
 
     @Test
-    void givenInvalidGameId_whenGetGameCalled_thenThrowInvalidPlayerException()  {
+    void givenInvalidGameId_whenGetGameCalled_thenThrowInvalidPlayerException() {
         // Given
         String invalidGameId = "invalidGame";
         GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(invalidGameId).build();

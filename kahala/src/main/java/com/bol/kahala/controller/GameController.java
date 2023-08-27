@@ -54,7 +54,7 @@ public class GameController {
     /**
      * Moves the game state based on the provided game ID and move details.
      *
-     * @param gameId         The ID of the game to be moved.
+     * @param gameId          The ID of the game to be moved.
      * @param moveGameRequest The request containing move details.
      * @return A ResponseEntity containing the updated game response.
      */

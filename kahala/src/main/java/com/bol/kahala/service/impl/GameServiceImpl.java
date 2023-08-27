@@ -41,6 +41,33 @@ public class GameServiceImpl implements GameService {
 
     private final ValidationMessagesUtil validationMessagesUtil;
 
+    private static Game createInitialGameInstance(String firstPlayerId, String secondPlayerId) {
+        int initialBigPit = 0;
+
+        // Initialize the game with the board and the current user as the first user
+        Board firstPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
+        Board secondPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
+
+        Player firstPlayer = Player.builder()
+                .isCurrentTurn(true)
+                .board(firstPlayerBoard)
+                .userId(firstPlayerId)
+                .build();
+        Player secondPlayer = Player.builder()
+                .board(secondPlayerBoard)
+                .isCurrentTurn(false)
+                .userId(secondPlayerId)
+                .build();
+
+        Game game = Game.builder()
+                .firstPlayer(firstPlayer)
+                .secondPlayer(secondPlayer)
+                .isFinished(false)
+                .activePlayerId(firstPlayer.getUserId())
+                .build();
+        return game;
+    }
+
     /**
      * Creates a new game based on the provided input parameters.
      *
@@ -59,7 +86,6 @@ public class GameServiceImpl implements GameService {
 
         return CreateGameServiceOutput.builder().game(game).build();
     }
-
 
     /**
      * Retrieves the status of a game based on the provided input parameters.
@@ -187,7 +213,6 @@ public class GameServiceImpl implements GameService {
                 .build();
     }
 
-
     private void updateGameBoard(Game game,
                                  List<Integer> currentPlayerSmallPits,
                                  int currentPlayerBigPit,
@@ -203,34 +228,6 @@ public class GameServiceImpl implements GameService {
 
         // Update the opponent player's board
         opponentPlayer.getBoard().setSmallPits(opponentPlayerSmallPits);
-    }
-
-
-    private static Game createInitialGameInstance(String firstPlayerId, String secondPlayerId) {
-        int initialBigPit = 0;
-
-        // Initialize the game with the board and the current user as the first user
-        Board firstPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
-        Board secondPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
-
-        Player firstPlayer = Player.builder()
-                .isCurrentTurn(true)
-                .board(firstPlayerBoard)
-                .userId(firstPlayerId)
-                .build();
-        Player secondPlayer = Player.builder()
-                .board(secondPlayerBoard)
-                .isCurrentTurn(false)
-                .userId(secondPlayerId)
-                .build();
-
-        Game game = Game.builder()
-                .firstPlayer(firstPlayer)
-                .secondPlayer(secondPlayer)
-                .isFinished(false)
-                .activePlayerId(firstPlayer.getUserId())
-                .build();
-        return game;
     }
 
     private void validateCreateGameServiceInput(CreateGameServiceInput input) {

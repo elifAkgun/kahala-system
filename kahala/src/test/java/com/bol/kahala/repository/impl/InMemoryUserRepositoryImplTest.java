@@ -1,7 +1,5 @@
 package com.bol.kahala.repository.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.bol.kahala.model.domain.User;
 import com.bol.kahala.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryUserRepositoryImplTest {
 

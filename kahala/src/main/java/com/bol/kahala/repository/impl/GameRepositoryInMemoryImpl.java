@@ -2,13 +2,11 @@ package com.bol.kahala.repository.impl;
 
 import com.bol.kahala.model.domain.Game;
 import com.bol.kahala.repository.GameRepository;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-
-import java.util.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**

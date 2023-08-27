@@ -1,7 +1,6 @@
 package com.bol.kahala.repository.impl;
 
 import com.bol.kahala.model.domain.Game;
-import com.bol.kahala.repository.GameRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,28 +16,29 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.sql.DataSource;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class GameRepositoryInMemoryImplTest {
 
-        @Autowired
-        private DataSource dataSource;
-        @Autowired
-        private JdbcTemplate jdbcTemplate;
-        @InjectMocks
-        private GameRepositoryInMemoryImpl gameRepository;
-
-        @Test
-        void injectedComponentsAreNotNull() {
-            assertNotNull(dataSource);
-            assertNotNull(jdbcTemplate);
-            assertNotNull(gameRepository);
-        }
+    @Autowired
+    private DataSource dataSource;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    @InjectMocks
+    private GameRepositoryInMemoryImpl gameRepository;
     @InjectMocks
     private GameRepositoryInMemoryImpl inMemoryGameRepository;
+
+    @Test
+    void injectedComponentsAreNotNull() {
+        assertNotNull(dataSource);
+        assertNotNull(jdbcTemplate);
+        assertNotNull(gameRepository);
+    }
 
     @BeforeEach
     void setUp() {
