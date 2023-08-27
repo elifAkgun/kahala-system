@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.bol.kahala.model.domain.User;
 import com.bol.kahala.repository.UserRepository;
-import com.bol.kahala.service.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Optional;
 import java.util.UUID;
 
 class InMemoryUserRepositoryImplTest {
@@ -41,7 +39,7 @@ class InMemoryUserRepositoryImplTest {
 
     @Test
     @DisplayName("Test finding an existing user by ID")
-    void givenExistingUserId_whenFindUserById_thenUserIsFound() throws UserNotFoundException {
+    void givenExistingUserId_whenFindUserById_thenUserIsFound() {
         String userId = UUID.randomUUID().toString();
         User user = new User();
         user.setUserId(userId);

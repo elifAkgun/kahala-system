@@ -1,7 +1,6 @@
 package com.bol.kahala.repository.impl;
 
 import com.bol.kahala.model.domain.Game;
-import com.bol.kahala.service.exception.GameNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ class InMemoryGameRepositoryImplTest {
 
     @Test
     @DisplayName("Test finding an existing game by ID")
-    void givenExistingGameId_whenFindGameById_thenGameIsFound() throws GameNotFoundException {
+    void givenExistingGameId_whenFindGameById_thenGameIsFound() {
         String gameId = UUID.randomUUID().toString();
         Game game = new Game();
         game.setGameId(gameId);

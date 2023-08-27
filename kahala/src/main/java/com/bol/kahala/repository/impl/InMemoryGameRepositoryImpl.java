@@ -2,7 +2,6 @@ package com.bol.kahala.repository.impl;
 
 import com.bol.kahala.model.domain.Game;
 import com.bol.kahala.repository.GameRepository;
-import com.bol.kahala.service.exception.GameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;

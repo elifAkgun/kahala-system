@@ -5,7 +5,6 @@ import com.bol.kahala.repository.UserRepository;
 import com.bol.kahala.service.exception.DuplicateUserNameException;
 import com.bol.kahala.service.exception.InvalidUserException;
 import com.bol.kahala.service.exception.UserAlreadyExistException;
-import com.bol.kahala.service.exception.UserNotFoundException;
 import com.bol.kahala.service.input.CreateUserServiceInput;
 import com.bol.kahala.service.input.UserServiceInput;
 import com.bol.kahala.service.output.CreateUserServiceOutput;
@@ -152,7 +151,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void givenValidUserServiceInput_whenGetUserCalled_thenReturnUser() throws UserNotFoundException {
+    void givenValidUserServiceInput_whenGetUserCalled_thenReturnUser() {
         // given- precondition or setup
         User user = User.builder().userId(USER_ID)
                 .password(PASSWORD)

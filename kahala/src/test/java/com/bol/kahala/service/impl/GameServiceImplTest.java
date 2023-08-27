@@ -3,13 +3,11 @@ package com.bol.kahala.service.impl;
 import com.bol.kahala.model.domain.*;
 import com.bol.kahala.repository.GameRepository;
 import com.bol.kahala.service.UserService;
-import com.bol.kahala.service.exception.GameNotFoundException;
 import com.bol.kahala.service.exception.InvalidGameException;
 import com.bol.kahala.service.exception.InvalidPlayerException;
 import com.bol.kahala.service.input.*;
 import com.bol.kahala.service.output.*;
 import com.bol.kahala.validation.ValidationMessagesUtil;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -124,7 +122,7 @@ class GameServiceImplTest {
     }
 
     @Test
-    void givenInitialGameObject_whenMoveGameCalled_returnNextGameBoardPosition() throws GameNotFoundException {
+    void givenInitialGameObject_whenMoveGameCalled_returnNextGameBoardPosition()  {
         // given- precondition or setup
         String gameId = GAME_ID;
 
@@ -176,7 +174,7 @@ class GameServiceImplTest {
     }
 
     @Test
-    void givenInitialGameObject_whenMoveGameFrom6thPit_returnNextGameBoardPosition() throws GameNotFoundException {
+    void givenInitialGameObject_whenMoveGameFrom6thPit_returnNextGameBoardPosition()  {
         // given- precondition or setup
         String gameId = GAME_ID;
 
@@ -228,7 +226,7 @@ class GameServiceImplTest {
     }
 
     @Test
-    void givenGameWithStones_whenMoveGameCaptureOpponentStones_returnUpdatedGameBoard() throws GameNotFoundException {
+    void givenGameWithStones_whenMoveGameCaptureOpponentStones_returnUpdatedGameBoard()  {
         // Given
         // Initialize the board with a specific stone distribution
         List<Integer> firstPlayerSmallPits = new ArrayList<>(Arrays.asList(1, 0, 2, 0, 8, 7));
@@ -282,7 +280,7 @@ class GameServiceImplTest {
 
 
     @Test
-    void givenGameWithStones_whenMovementEndWithBigPit_thenContinueWithSameUser() throws GameNotFoundException {
+    void givenGameWithStones_whenMovementEndWithBigPit_thenContinueWithSameUser()  {
         // Given
         String gameId = GAME_ID;
 
@@ -340,7 +338,7 @@ class GameServiceImplTest {
 
 
     @Test
-    void givenGameWithStones_whenThereIsNoStone_thenGameOver() throws GameNotFoundException {
+    void givenGameWithStones_whenThereIsNoStone_thenGameOver()  {
         // Given
         String gameId = GAME_ID;
 
@@ -404,7 +402,7 @@ class GameServiceImplTest {
 
 
     @Test
-    void givenValidGameId_whenResetGameCalled_thenGameResetAndReturned() throws GameNotFoundException {
+    void givenValidGameId_whenResetGameCalled_thenGameResetAndReturned()  {
         // Given
 
         Game game = getPlayedGame();
@@ -435,7 +433,7 @@ class GameServiceImplTest {
 
 
     @Test
-    void givenInvalidGameId_whenResetGameCalled_thenThrowInvalidPlayerException() throws GameNotFoundException {
+    void givenInvalidGameId_whenResetGameCalled_thenThrowInvalidPlayerException()  {
         // Given
         String invalidGameId = "invalidGame";
         GameResetServiceInput resetInput = GameResetServiceInput.builder().gameId(invalidGameId).build();
@@ -449,7 +447,7 @@ class GameServiceImplTest {
     }
 
     @Test
-    void givenValidGameId_whenGetGameCalled_thenRetrieveGameStatus() throws GameNotFoundException {
+    void givenValidGameId_whenGetGameCalled_thenRetrieveGameStatus()  {
         // Given
         String gameId = GAME_ID;
         GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(gameId).build();
@@ -466,7 +464,7 @@ class GameServiceImplTest {
     }
 
     @Test
-    void givenInvalidGameId_whenGetGameCalled_thenThrowInvalidPlayerException() throws GameNotFoundException {
+    void givenInvalidGameId_whenGetGameCalled_thenThrowInvalidPlayerException()  {
         // Given
         String invalidGameId = "invalidGame";
         GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(invalidGameId).build();

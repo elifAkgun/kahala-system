@@ -1,7 +1,6 @@
 package com.bol.kahala.repository;
 
 import com.bol.kahala.model.domain.Game;
-import com.bol.kahala.service.exception.GameNotFoundException;
 import org.springframework.data.repository.CrudRepository;
 
 /**
