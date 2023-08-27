@@ -2,6 +2,7 @@ package com.bol.kahala.repository.impl;
 
 import com.bol.kahala.model.domain.Game;
 import com.bol.kahala.repository.GameRepository;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -14,7 +15,7 @@ import java.util.UUID;
  * This class implements the GameRepository interface and provides an in-memory storage for game data.
  */
 @Repository
-public class InMemoryGameRepositoryImpl implements GameRepository {
+public class GameRepositoryInMemoryImpl implements GameRepository {
 
     // A map to store active games using their unique IDs as keys
     private final Map<String, Game> activeGames = new HashMap<>();

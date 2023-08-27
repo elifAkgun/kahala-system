@@ -134,7 +134,7 @@ class GameTest {
                 .build());
 
         //user1 movement: 6th Pit
-        MoveGameServiceOutput moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
+         gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
                         .playerId(user1.getUser().getUserId())
@@ -143,7 +143,7 @@ class GameTest {
 
 
         //user2 movement: 1st Pit
-        moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
+       gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
                         .playerId(user2.getUser().getUserId())
@@ -152,7 +152,7 @@ class GameTest {
 
 
         //user1 movement: 1st Pit
-        moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
+        gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
                         .playerId(user1.getUser().getUserId())
@@ -161,7 +161,7 @@ class GameTest {
 
 
         //user2 movement: 2nd Pit
-        moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
+        gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
                         .playerId(user2.getUser().getUserId())
@@ -170,7 +170,7 @@ class GameTest {
 
 
         //user1 movement: 3rd Pit
-        moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
+        MoveGameServiceOutput moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
                         .playerId(user1.getUser().getUserId())

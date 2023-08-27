@@ -1,23 +1,44 @@
 package com.bol.kahala.repository.impl;
 
 import com.bol.kahala.model.domain.Game;
+import com.bol.kahala.repository.GameRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.sql.DataSource;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
-class InMemoryGameRepositoryImplTest {
+@ExtendWith(SpringExtension.class)
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class GameRepositoryInMemoryImplTest {
 
+        @Autowired
+        private DataSource dataSource;
+        @Autowired
+        private JdbcTemplate jdbcTemplate;
+        @InjectMocks
+        private GameRepositoryInMemoryImpl gameRepository;
+
+        @Test
+        void injectedComponentsAreNotNull() {
+            assertNotNull(dataSource);
+            assertNotNull(jdbcTemplate);
+            assertNotNull(gameRepository);
+        }
     @InjectMocks
-    private InMemoryGameRepositoryImpl inMemoryGameRepository;
+    private GameRepositoryInMemoryImpl inMemoryGameRepository;
 
     @BeforeEach
     void setUp() {
