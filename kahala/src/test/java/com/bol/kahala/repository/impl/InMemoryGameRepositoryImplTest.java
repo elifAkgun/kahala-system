@@ -29,11 +29,10 @@ class InMemoryGameRepositoryImplTest {
     @DisplayName("Test saving a new game")
     void givenNewGame_whenSaveGame_thenGameIsSaved() {
         Game game = new Game();
-        inMemoryGameRepository.saveGame(game);
+        inMemoryGameRepository.save(game);
 
         assertNotNull(game.getGameId());
-        assertTrue(inMemoryGameRepository.getActiveGames().containsKey(game.getGameId()));
-        assertEquals(game, inMemoryGameRepository.getActiveGames().get(game.getGameId()));
+        assertEquals(game, inMemoryGameRepository.findAll().iterator().next());
     }
 
     @Test
@@ -42,19 +41,9 @@ class InMemoryGameRepositoryImplTest {
         String gameId = UUID.randomUUID().toString();
         Game game = new Game();
         game.setGameId(gameId);
-        inMemoryGameRepository.getActiveGames().put(gameId, game);
+        inMemoryGameRepository.save(game);
 
-        Game foundGame = inMemoryGameRepository.findGameById(gameId);
+        Game foundGame = inMemoryGameRepository.findById(gameId).get();
         assertEquals(game, foundGame);
-    }
-
-    @Test
-    @DisplayName("Test finding a non-existing game by ID")
-    void givenNonExistingGameId_whenFindGameById_thenThrowGameNotFoundException() {
-        String nonExistingGameId = UUID.randomUUID().toString();
-
-        assertThrows(GameNotFoundException.class, () -> {
-            inMemoryGameRepository.findGameById(nonExistingGameId);
-        });
     }
 }

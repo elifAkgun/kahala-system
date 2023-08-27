@@ -15,20 +15,21 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Copy;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+import java.util.Optional;
+
 import static com.bol.kahala.helper.UserDataHelper.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -46,10 +47,10 @@ class UserServiceImplTest {
 
     // JUnit test for
     @Test
-     void givenUserAlreadyExist_whenCreateUserCalled_thenReturnException() throws DuplicateUserNameException {
+    void givenUserAlreadyExist_whenCreateUserCalled_thenReturnException() throws DuplicateUserNameException {
         // given- precondition or setup
         User user = User.builder().userId("123").build();
-        given(userRepository.createUser(user))
+        given(userRepository.save(user))
                 .willThrow(UserAlreadyExistException.class);
 
 // when - action or the behaviour that we are going test
@@ -62,13 +63,13 @@ class UserServiceImplTest {
     }
 
     @Test
-     void givenValidCreateUserServiceInput_whenCreateUserCalled_thenReturnCreatedUser() throws DuplicateUserNameException {
+    void givenValidCreateUserServiceInput_whenCreateUserCalled_thenReturnCreatedUser() throws DuplicateUserNameException {
         // given- precondition or setup
         User user = User.builder().userId(USER_ID)
                 .password(PASSWORD)
                 .userName(USER_NAME)
                 .build();
-        given(userRepository.createUser(any(User.class))).willReturn(user);
+        given(userRepository.save(any(User.class))).willReturn(user);
 
         // when - action or the behaviour that we are going test
         CreateUserServiceInput serviceInput = CreateUserServiceInput.builder().user(user).build();
@@ -78,35 +79,68 @@ class UserServiceImplTest {
         assertThat(output.getUser().getUserName()).isEqualTo(USER_NAME);
         assertThat(output.getUser().getPassword()).isEqualTo(PASSWORD);
         assertThat(output.getUser().getUserId()).isEqualTo(USER_ID);
-
     }
 
     @Test
-    public void testCreateUser_WhenUserAlreadyExists_ThrowsUserAlreadyExistException() {
-        // Given
-        String existingUserName = "existingUser";
-        User existingUser = User.builder().userName(existingUserName).build();
-        CreateUserServiceInput input = CreateUserServiceInput.builder().user(existingUser).build();
+    public void testCreateUser_Success() throws UserAlreadyExistException {
+        // Creating mock data
+        User newUser = new User("userId", "newuser", "New User");
+        CreateUserServiceInput input = CreateUserServiceInput.builder().user(newUser).build();
 
-        given(userRepository.findUserByUserName(existingUserName)).willReturn(existingUser);
+        // Simulating userRepository.findAll
+        when(userRepository.findAll()).thenReturn(List.of());
+        // Simulating userRepository.save
+        when(userRepository.save(newUser)).thenReturn(newUser);
 
-        // When and Then
-        assertThrows(UserAlreadyExistException.class, () -> {
-            userService.createUser(input);
-        });
+        // Calling the service method
+        CreateUserServiceOutput output = userService.createUser(input);
 
-        verify(userRepository, never()).createUser(any());
+        // Checking the output
+        assertNotNull(output);
+        assertEquals(newUser, output.getUser());
+
+        // Verifying correct method invocations
+        verify(userRepository, times(1)).findAll();
+        verify(userRepository, times(1)).save(newUser);
+        verify(validationMessagesUtil, times(0)).getExceptionMessage(any(), any()); // User not found case
+
+        // Verifying no more interactions
+        verifyNoMoreInteractions(userRepository, validationMessagesUtil);
     }
 
     @Test
-     void givenUserNotExist_whenGetUserCalled_thenReturnException() throws UserNotFoundException {
+    public void testCreateUser_UserAlreadyExists() {
+        User existingUser = new User("userId", "user", "Existing User");
+        CreateUserServiceInput input = CreateUserServiceInput.builder()
+                .user(existingUser).build();
+
+        // Simulating userRepository.findAll
+        when(userRepository.findAll()).thenReturn(List.of(existingUser));
+
+        // Simulating validationMessagesUtil.getExceptionMessage
+        when(validationMessagesUtil.getExceptionMessage(any(), any())).thenReturn("User already exists");
+
+        // Calling the service method and expecting UserAlreadyExistException
+        assertThrows(UserAlreadyExistException.class, () -> userService.createUser(input));
+
+        // Verifying correct method invocations
+        verify(userRepository, times(1)).findAll();
+        verify(validationMessagesUtil, times(1)).getExceptionMessage(any(), any());
+
+        // Verifying no more interactions
+        verifyNoMoreInteractions(userRepository, validationMessagesUtil);
+    }
+
+
+    @Test
+    void givenUserNotExist_whenGetUserCalled_thenReturnException() {
         // given- precondition or setup
         User user = User.builder().userId(USER_ID)
                 .password(PASSWORD)
                 .userName(USER_NAME)
                 .build();
-        given(userRepository.findUserById(anyString()))
-                .willThrow(UserNotFoundException.class);
+        given(userRepository.findById(anyString()))
+                .willReturn(Optional.empty());
 
         // when - action or the behaviour that we are going test
         UserServiceInput serviceInput = UserServiceInput.builder().userId(USER_ID).build();
@@ -118,13 +152,13 @@ class UserServiceImplTest {
     }
 
     @Test
-     void givenValidUserServiceInput_whenGetUserCalled_thenReturnUser() throws UserNotFoundException {
+    void givenValidUserServiceInput_whenGetUserCalled_thenReturnUser() throws UserNotFoundException {
         // given- precondition or setup
         User user = User.builder().userId(USER_ID)
                 .password(PASSWORD)
                 .userName(USER_NAME)
                 .build();
-        given(userRepository.findUserById(anyString())).willReturn(user);
+        given(userRepository.findById(anyString())).willReturn(Optional.of(user));
 
         // when - action or the behaviour that we are going test
         UserServiceInput serviceInput = UserServiceInput.builder().userId(USER_ID).build();

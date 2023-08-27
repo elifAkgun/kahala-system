@@ -8,7 +8,6 @@ import com.bol.kahala.model.domain.User;
 import com.bol.kahala.repository.GameRepository;
 import com.bol.kahala.service.GameService;
 import com.bol.kahala.service.UserService;
-import com.bol.kahala.service.exception.GameNotFoundException;
 import com.bol.kahala.service.exception.InvalidGameException;
 import com.bol.kahala.service.exception.InvalidPlayerException;
 import com.bol.kahala.service.input.*;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.bol.kahala.constant.GameConstants.*;
 import static com.bol.kahala.validation.ValidationMessages.*;
@@ -34,7 +34,6 @@ import static com.bol.kahala.validation.ValidationMessages.*;
 @RequiredArgsConstructor
 @Slf4j
 public class GameServiceImpl implements GameService {
-
 
     private final GameRepository gameRepository;
     private final UserService userService;
@@ -56,7 +55,7 @@ public class GameServiceImpl implements GameService {
 
         Game game = createInitialGameInstance(input.getFirstPlayerId(), input.getSecondPlayerId());
 
-        gameRepository.saveGame(game);
+        gameRepository.save(game);
 
         return CreateGameServiceOutput.builder().game(game).build();
     }
@@ -92,7 +91,7 @@ public class GameServiceImpl implements GameService {
         initialGameInstance.setGameId(game.getGameId());
 
         // Save the initial game instance to the repository
-        gameRepository.saveGame(initialGameInstance);
+        gameRepository.save(initialGameInstance);
 
         // Return the reset game as output
         return GameResetServiceOutput.builder().game(initialGameInstance).build();
@@ -180,7 +179,7 @@ public class GameServiceImpl implements GameService {
 
         // Update the game status and save it to the repository
         updateGameStatus(game, activePlayerId, gameFinished);
-        gameRepository.saveGame(game);
+        gameRepository.save(game);
 
         // Return the updated game state as output
         return MoveGameServiceOutput.builder()
@@ -256,9 +255,10 @@ public class GameServiceImpl implements GameService {
     }
 
     private Game getGame(String gameId) {
-        try {
-            return gameRepository.findGameById(gameId);
-        } catch (GameNotFoundException e) {
+        Optional<Game> optionalGame = gameRepository.findById(gameId);
+        if (optionalGame.isPresent()) {
+            return optionalGame.get();
+        } else {
             logger.info("Invalid gameId: {}", gameId);
             throw new InvalidGameException(validationMessagesUtil.getExceptionMessage(
                     INVALID_GAME_EXCEPTION_GAME_NOT_FOUND_MESSAGE, gameId));

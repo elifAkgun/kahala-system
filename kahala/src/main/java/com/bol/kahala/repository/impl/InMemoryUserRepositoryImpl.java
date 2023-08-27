@@ -5,9 +5,7 @@ import com.bol.kahala.repository.UserRepository;
 import com.bol.kahala.service.exception.UserNotFoundException;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,10 +27,15 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
      * @return The created user.
      */
     @Override
-    public User createUser(User user) {
+    public User save(User user) {
         user.setUserId(UUID.randomUUID().toString());
         userMap.put(user.getUserId(), user);
         return user;
+    }
+
+    @Override
+    public <S extends User> Iterable<S> saveAll(Iterable<S> entities) {
+        return null;
     }
 
     /**
@@ -43,28 +46,58 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
      * @throws UserNotFoundException If the user with the specified ID is not found.
      */
     @Override
-    public User findUserById(String userId) throws UserNotFoundException {
+    public Optional<User> findById(String userId) {
         if (!userMap.containsKey(userId)) {
-            throw new UserNotFoundException();
+           return Optional.empty();
         }
-        return userMap.get(userId);
+        return Optional.of(userMap.get(userId));
     }
 
-    /**
-     * Finds a user by their username.
-     *
-     * @param userName The username of the user to find.
-     * @return The retrieved user, or null if not found.
-     */
     @Override
-    public User findUserByUserName(String userName) {
-        for (User user : userMap.values()) {
-            if (user.getUserName().equals(userName)) {
-                return user;
-            }
-        }
+    public boolean existsById(String s) {
+        return false;
+    }
+
+    @Override
+    public Iterable<User> findAll() {
         return null;
     }
+
+    @Override
+    public Iterable<User> findAllById(Iterable<String> strings) {
+        return null;
+    }
+
+    @Override
+    public long count() {
+        return 0;
+    }
+
+    @Override
+    public void deleteById(String s) {
+
+    }
+
+    @Override
+    public void delete(User entity) {
+
+    }
+
+    @Override
+    public void deleteAllById(Iterable<? extends String> strings) {
+
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends User> entities) {
+
+    }
+
+    @Override
+    public void deleteAll() {
+
+    }
+
 
     /**
      * Returns the map containing user data.

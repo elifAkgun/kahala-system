@@ -12,9 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Optional;
 import java.util.UUID;
-
-import static org.mockito.Mockito.when;
 
 class InMemoryUserRepositoryImplTest {
 
@@ -33,7 +32,7 @@ class InMemoryUserRepositoryImplTest {
     @DisplayName("Test creating a new user")
     void givenNewUser_whenCreateUser_thenUserIsCreated() {
         User newUser = new User();
-        inMemoryUserRepository.createUser(newUser);
+        inMemoryUserRepository.save(newUser);
 
         assertNotNull(newUser.getUserId());
         assertTrue(inMemoryUserRepository.getUsers().containsKey(newUser.getUserId()));
@@ -48,40 +47,7 @@ class InMemoryUserRepositoryImplTest {
         user.setUserId(userId);
         inMemoryUserRepository.getUsers().put(userId, user);
 
-        User foundUser = inMemoryUserRepository.findUserById(userId);
+        User foundUser = inMemoryUserRepository.findById(userId).get();
         assertEquals(user, foundUser);
-    }
-
-    @Test
-    @DisplayName("Test finding a non-existing user by ID")
-    void givenNonExistingUserId_whenFindUserById_thenThrowUserNotFoundException() {
-        String nonExistingUserId = UUID.randomUUID().toString();
-
-        assertThrows(UserNotFoundException.class, () -> {
-            inMemoryUserRepository.findUserById(nonExistingUserId);
-        });
-    }
-
-    @Test
-    @DisplayName("Test finding an existing user by username")
-    void givenExistingUserName_whenFindUserByUserName_thenUserIsFound() {
-        String userName = "testUser";
-        User user = new User();
-        user.setUserId(UUID.randomUUID().toString());
-        user.setUserName(userName);
-        inMemoryUserRepository.getUsers().put(user.getUserId(), user);
-
-        User foundUser = inMemoryUserRepository.findUserByUserName(userName);
-        assertNotNull(foundUser);
-        assertEquals(user, foundUser);
-    }
-
-    @Test
-    @DisplayName("Test finding a non-existing user by username")
-    void givenNonExistingUserName_whenFindUserByUserName_thenReturnNull() {
-        String nonExistingUserName = "nonExistingUser";
-
-        User foundUser = inMemoryUserRepository.findUserByUserName(nonExistingUserName);
-        assertNull(foundUser);
     }
 }

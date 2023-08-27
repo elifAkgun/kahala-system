@@ -3,6 +3,8 @@ package com.bol.kahala.model.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
 /**
  * This class represents a user in the system.
@@ -12,11 +14,14 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode
+@RedisHash("user")
 public class User {
 
     /**
      * The unique identifier of the user.
      */
+    @Id
     private String userId;
 
     /**

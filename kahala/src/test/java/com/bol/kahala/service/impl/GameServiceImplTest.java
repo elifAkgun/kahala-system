@@ -9,6 +9,7 @@ import com.bol.kahala.service.exception.InvalidPlayerException;
 import com.bol.kahala.service.input.*;
 import com.bol.kahala.service.output.*;
 import com.bol.kahala.validation.ValidationMessagesUtil;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,7 +46,8 @@ class GameServiceImplTest {
     @Test
     void givenGameObject_whenCreateGameCalled_thenCallSaveGame() {
         // given- precondition or setup
-        doNothing().when(gameRepository).saveGame(any(Game.class));
+        given(gameRepository.save(any(Game.class)))
+                .willReturn(GAME);
 
         given(userService.getUser(UserServiceInput.builder().userId(FIRST_PLAYER_USER_ID).build()))
                 .willReturn(UserServiceOutput.builder()
@@ -61,7 +63,7 @@ class GameServiceImplTest {
                 .secondPlayerId(SECOND_PLAYER_USER_ID).build());
 
         // then - verify the output
-        verify(gameRepository, atLeastOnce()).saveGame(any(Game.class));
+        verify(gameRepository, atLeastOnce()).save(any(Game.class));
     }
 
     @Test
@@ -78,7 +80,7 @@ class GameServiceImplTest {
                 .isInstanceOf(InvalidPlayerException.class);
 
         // then - verify the output
-        verify(gameRepository, never()).saveGame(any(Game.class));
+        verify(gameRepository, never()).save(any(Game.class));
     }
 
     @Test
@@ -90,7 +92,8 @@ class GameServiceImplTest {
                 .build();
 
 
-        doNothing().when(gameRepository).saveGame(any(Game.class));
+        given(gameRepository.save(any(Game.class)))
+                .willReturn(GAME);
 
         given(userService.getUser(UserServiceInput.builder().userId(FIRST_PLAYER_USER_ID).build()))
                 .willReturn(UserServiceOutput.builder()
@@ -144,13 +147,13 @@ class GameServiceImplTest {
                 .build();
 
         // Initialize a actualGame instance here
-        Game game =Game.builder().gameId(GAME_ID)
+        Game game = Game.builder().gameId(GAME_ID)
                 .firstPlayer(firstPlayer)
                 .secondPlayer(secondPlayer).activePlayerId(FIRST_PLAYER_USER_ID)
                 .isFinished(false)
                 .winnerPlayerId(null).build();
 
-        given(gameRepository.findGameById(gameId)).willReturn(game);
+        given(gameRepository.findById(gameId)).willReturn(Optional.of(game));
 
         // when - action or the behaviour that we are going test
         Movement movement = new Movement(FIRST_PLAYER_USER_ID, 3);
@@ -202,7 +205,7 @@ class GameServiceImplTest {
                 .isFinished(false)
                 .winnerPlayerId(null).build();
 
-        given(gameRepository.findGameById(GAME_ID)).willReturn(game);
+        given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(game));
 
         // when - action or the behaviour that we are going test
         Movement movement = new Movement(FIRST_PLAYER_USER_ID, 6);
@@ -254,7 +257,7 @@ class GameServiceImplTest {
                 .isFinished(false)
                 .winnerPlayerId(null).build();
 
-        when(gameRepository.findGameById(GAME_ID)).thenReturn(game);
+        given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(game));
 
         // Define the movement to capture stones from the 1st pit
         Movement movement = new Movement(FIRST_PLAYER_USER_ID, 1);
@@ -310,7 +313,7 @@ class GameServiceImplTest {
                 .isFinished(false)
                 .winnerPlayerId(null).build();
 
-        when(gameRepository.findGameById(gameId)).thenReturn(game);
+        given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(game));
 
         // Define the movement to capture stones from the 3rd pit
         Movement movement = new Movement(FIRST_PLAYER_USER_ID, 3);
@@ -369,7 +372,7 @@ class GameServiceImplTest {
                 .winnerPlayerId(null).build();
 
         // Initialize the game with the board and the current user as the second user
-        when(gameRepository.findGameById(gameId)).thenReturn(game);
+        given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(game));
 
 
         // Define the movement to capture stones from the 3rd pit
@@ -404,11 +407,11 @@ class GameServiceImplTest {
     void givenValidGameId_whenResetGameCalled_thenGameResetAndReturned() throws GameNotFoundException {
         // Given
 
-        Game mockedGame = getPlayedGame();
+        Game game = getPlayedGame();
 
         // Mock the repository to return a game with validGameId
 
-        given(gameRepository.findGameById(GAME_ID)).willReturn(mockedGame);
+        given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(game));
 
         GameResetServiceInput resetInput = GameResetServiceInput.builder().gameId(GAME_ID).build();
 
@@ -427,7 +430,7 @@ class GameServiceImplTest {
         assertThat(resetOutput.getGame().getSecondPlayer().getBoard().getBigPit()).isZero();
 
         // Verify that the game is saved after resetting
-        verify(gameRepository).saveGame(resetOutput.getGame());
+        verify(gameRepository).save(resetOutput.getGame());
     }
 
 
@@ -438,7 +441,7 @@ class GameServiceImplTest {
         GameResetServiceInput resetInput = GameResetServiceInput.builder().gameId(invalidGameId).build();
 
         // Mock the repository to throw a GameNotFoundException
-        given(gameRepository.findGameById(invalidGameId)).willThrow(GameNotFoundException.class);
+        given(gameRepository.findById(invalidGameId)).willReturn(Optional.empty());
 
         // When and Then
         assertThatThrownBy(() -> gameService.resetGame(resetInput))
@@ -448,12 +451,12 @@ class GameServiceImplTest {
     @Test
     void givenValidGameId_whenGetGameCalled_thenRetrieveGameStatus() throws GameNotFoundException {
         // Given
-        String gameId = "validGame";
+        String gameId = GAME_ID;
         GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(gameId).build();
         Game mockGame = new Game(); // Create a mock game
 
         // Mock the repository to return the mock game
-        given(gameRepository.findGameById(gameId)).willReturn(mockGame);
+        given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(mockGame));
 
         // When
         GameStatusServiceOutput gameStatusOutput = gameService.getGame(gameStatusInput);
@@ -469,7 +472,7 @@ class GameServiceImplTest {
         GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(invalidGameId).build();
 
         // Mock the repository to throw a GameNotFoundException
-        given(gameRepository.findGameById(invalidGameId)).willThrow(GameNotFoundException.class);
+        given(gameRepository.findById(invalidGameId)).willReturn(Optional.empty());
 
         // When and Then
         assertThatThrownBy(() -> gameService.getGame(gameStatusInput))

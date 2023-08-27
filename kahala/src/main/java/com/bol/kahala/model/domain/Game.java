@@ -1,6 +1,8 @@
 package com.bol.kahala.model.domain;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
 /**
  * This class represents a game instance with its associated players and state.
@@ -11,11 +13,13 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @EqualsAndHashCode
+@RedisHash("game")
 public class Game {
 
     /**
      * The unique identifier of the game.
      */
+    @Id
     private String gameId;
 
     /**

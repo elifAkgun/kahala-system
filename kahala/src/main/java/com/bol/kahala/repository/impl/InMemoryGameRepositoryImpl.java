@@ -5,9 +5,7 @@ import com.bol.kahala.repository.GameRepository;
 import com.bol.kahala.service.exception.GameNotFoundException;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +26,18 @@ public class InMemoryGameRepositoryImpl implements GameRepository {
      * @param game The game object to be saved.
      */
     @Override
-    public void saveGame(Game game) {
+    public Game save(Game game) {
         if (game.getGameId() == null) {
             String gameId = UUID.randomUUID().toString();
             game.setGameId(gameId);
         }
         activeGames.put(game.getGameId(), game);
+        return game;
+    }
+
+    @Override
+    public <S extends Game> Iterable<S> saveAll(Iterable<S> entities) {
+        return null;
     }
 
     /**
@@ -44,11 +48,16 @@ public class InMemoryGameRepositoryImpl implements GameRepository {
      * @throws GameNotFoundException If the game with the specified ID is not found.
      */
     @Override
-    public Game findGameById(String gameId) throws GameNotFoundException {
+    public Optional<Game> findById(String gameId) {
         if (!activeGames.containsKey(gameId)) {
-            throw new GameNotFoundException();
+            return Optional.empty();
         }
-        return activeGames.get(gameId);
+        return Optional.of(activeGames.get(gameId));
+    }
+
+    @Override
+    public boolean existsById(String s) {
+        return false;
     }
 
     /**
@@ -56,7 +65,42 @@ public class InMemoryGameRepositoryImpl implements GameRepository {
      *
      * @return The map of active games.
      */
-    public Map<String, Game> getActiveGames() {
-        return activeGames;
+    public Iterable<Game> findAll() {
+        return activeGames.values();
+    }
+
+    @Override
+    public Iterable<Game> findAllById(Iterable<String> strings) {
+        return null;
+    }
+
+    @Override
+    public long count() {
+        return activeGames.size();
+    }
+
+    @Override
+    public void deleteById(String s) {
+
+    }
+
+    @Override
+    public void delete(Game entity) {
+
+    }
+
+    @Override
+    public void deleteAllById(Iterable<? extends String> strings) {
+
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends Game> entities) {
+
+    }
+
+    @Override
+    public void deleteAll() {
+
     }
 }

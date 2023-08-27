@@ -2,11 +2,14 @@ package com.bol.kahala.repository;
 
 import com.bol.kahala.model.domain.User;
 import com.bol.kahala.service.exception.UserNotFoundException;
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.Optional;
 
 /**
  * This interface defines the contract for managing user data in the repository.
  */
-public interface UserRepository {
+public interface UserRepository extends CrudRepository<User, String> {
 
     /**
      * Creates a new user in the repository.
@@ -14,7 +17,7 @@ public interface UserRepository {
      * @param user The user object representing the user to be created.
      * @return The created user.
      */
-    User createUser(User user);
+    User save(User user);
 
     /**
      * Retrieves a user by their unique identifier.
@@ -23,14 +26,7 @@ public interface UserRepository {
      * @return The retrieved user.
      * @throws UserNotFoundException If the user with the specified ID is not found.
      */
-    User findUserById(String userId) throws UserNotFoundException;
+    Optional<User> findById(String userId);
 
-    /**
-     * Retrieves a user by their username.
-     *
-     * @param userName The username of the user to retrieve.
-     * @return The retrieved user, or null if not found.
-     */
-    User findUserByUserName(String userName);
 }
 

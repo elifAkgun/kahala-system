@@ -5,7 +5,6 @@ import com.bol.kahala.repository.UserRepository;
 import com.bol.kahala.service.UserService;
 import com.bol.kahala.service.exception.InvalidUserException;
 import com.bol.kahala.service.exception.UserAlreadyExistException;
-import com.bol.kahala.service.exception.UserNotFoundException;
 import com.bol.kahala.service.input.CreateUserServiceInput;
 import com.bol.kahala.service.input.UserServiceInput;
 import com.bol.kahala.service.output.CreateUserServiceOutput;
@@ -13,6 +12,8 @@ import com.bol.kahala.service.output.UserServiceOutput;
 import com.bol.kahala.validation.ValidationMessagesUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 import static com.bol.kahala.validation.ValidationMessages.INVALID_USER_EXCEPTION_USER_NOT_FOUND_MESSAGE;
 import static com.bol.kahala.validation.ValidationMessages.USER_ALREADY_EXIST_EXCEPTION_USER_ALREADY_EXIST_MESSAGE;
@@ -37,12 +38,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public CreateUserServiceOutput createUser(CreateUserServiceInput input) throws UserAlreadyExistException {
         User user = input.getUser();
-        User userByUserName = userRepository.findUserByUserName(input.getUser().getUserName());
-        if (userByUserName != null) {
-            throw new UserAlreadyExistException(validationMessagesUtil.getExceptionMessage(
-                   USER_ALREADY_EXIST_EXCEPTION_USER_ALREADY_EXIST_MESSAGE, user.getUserName()));
-        }
-        User createdUser = userRepository.createUser(user);
+        Iterable<User> userRepositoryAll = userRepository.findAll();
+        userRepositoryAll.iterator().forEachRemaining(user1 -> {
+            if (user1.getUserName().equals(input.getUser().getUserName())) {
+                throw new UserAlreadyExistException(validationMessagesUtil.getExceptionMessage(
+                        USER_ALREADY_EXIST_EXCEPTION_USER_ALREADY_EXIST_MESSAGE, user.getUserName()));
+            }
+        });
+
+        User createdUser = userRepository.save(user);
         return CreateUserServiceOutput.builder().user(createdUser).build();
     }
 
@@ -55,14 +59,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserServiceOutput getUser(UserServiceInput input) {
-        User user = null;
-        try {
-            user = userRepository.findUserById(input.getUserId());
-        } catch (UserNotFoundException e) {
-            e.printStackTrace();
+        Optional<User> optionalUser = userRepository.findById(input.getUserId());
+        if (optionalUser.isPresent())
+            return UserServiceOutput.builder().user(optionalUser.get()).build();
+        else {
             throw new InvalidUserException(validationMessagesUtil.getExceptionMessage(
-                   INVALID_USER_EXCEPTION_USER_NOT_FOUND_MESSAGE, input.getUserId()));
+                    INVALID_USER_EXCEPTION_USER_NOT_FOUND_MESSAGE, input.getUserId()));
         }
-        return UserServiceOutput.builder().user(user).build();
     }
 }

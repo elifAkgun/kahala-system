@@ -2,6 +2,8 @@ package com.bol.kahala.integration;
 
 import com.bol.kahala.model.domain.Movement;
 import com.bol.kahala.model.domain.User;
+import com.bol.kahala.repository.GameRepository;
+import com.bol.kahala.repository.UserRepository;
 import com.bol.kahala.service.GameService;
 import com.bol.kahala.service.UserService;
 import com.bol.kahala.service.input.CreateGameServiceInput;
@@ -10,6 +12,7 @@ import com.bol.kahala.service.input.MoveGameServiceInput;
 import com.bol.kahala.service.output.CreateGameServiceOutput;
 import com.bol.kahala.service.output.CreateUserServiceOutput;
 import com.bol.kahala.service.output.MoveGameServiceOutput;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,82 +30,91 @@ class GameTest {
     @Autowired
     GameService gameService;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    GameRepository gameRepository;
+
+
     @Test
     void givenNormalGameConditions_whenGamePlayed_thenReturnValidStatus() {
 
         //Create Users
-        CreateUserServiceOutput jane = userService.createUser(CreateUserServiceInput.builder()
-                .user(User.builder().userName("Jane").build()).build());
-        CreateUserServiceOutput emma = userService.createUser(CreateUserServiceInput.builder()
-                .user(User.builder().userName("Emma").build()).build());
+        CreateUserServiceOutput user1 = userService.createUser(CreateUserServiceInput.builder()
+                .user(User.builder().userName("user1").build()).build());
+        CreateUserServiceOutput user2 = userService.createUser(CreateUserServiceInput.builder()
+                .user(User.builder().userName("user2").build()).build());
 
         //Create Game
         CreateGameServiceOutput game = gameService.createGame(CreateGameServiceInput.builder()
-                .firstPlayerId(jane.getUser().getUserId())
-                .secondPlayerId(emma.getUser().getUserId())
+                .firstPlayerId(user1.getUser().getUserId())
+                .secondPlayerId(user2.getUser().getUserId())
                 .build());
 
-        //Jane movement: 6th Pit
+        //user1 movement: 6th Pit
         MoveGameServiceOutput moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(jane.getUser().getUserId())
+                        .playerId(user1.getUser().getUserId())
                         .position(6).build())
                 .build());
 
-        // Asserts for the game state after Jane's movement : 6th Pit
-        assertEquals(emma.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+        // Asserts for the game state after user1's movement : 6th Pit
+        assertEquals(user2.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
         assertEquals(List.of(6, 6, 6, 6, 6, 0), moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getSmallPits());
         assertEquals(1, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
         assertEquals(List.of(7, 7, 7, 7, 7, 6), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
         assertEquals(0, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
 
-        //Emma movement: 1st Pit
+        //user2 movement: 1st Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(emma.getUser().getUserId())
+                        .playerId(user2.getUser().getUserId())
                         .position(1).build())
                 .build());
 
-        // Asserts for the game state after Emma's movement : 1st Pit
+        // Asserts for the game state after user2's movement : 1st Pit
         assertEquals(List.of(7, 6, 6, 6, 6, 0), moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getSmallPits());
         assertEquals(1, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
         assertEquals(List.of(0, 8, 8, 8, 8, 7), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
         assertEquals(1, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(jane.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+        assertEquals(user1.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
 
 
-        //Jane movement: 1st Pit
+        //user1 movement: 1st Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(jane.getUser().getUserId())
+                        .playerId(user1.getUser().getUserId())
                         .position(1).build())
                 .build());
 
-        // Asserts for the game state after Jane's movement : 1st Pit
+        // Asserts for the game state after user1's movement : 1st Pit
         assertEquals(List.of(0, 7, 7, 7, 7, 1), moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getSmallPits());
         assertEquals(2, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
         assertEquals(List.of(1, 8, 8, 8, 8, 7), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
         assertEquals(1, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(emma.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+        assertEquals(user2.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
 
 
-        //Emma movement: 2nd Pit
+        //user2 movement: 2nd Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(emma.getUser().getUserId())
+                        .playerId(user2.getUser().getUserId())
                         .position(2).build())
                 .build());
 
-        // Asserts for the game state after Emma's movement : 2nd Pit
+        // Asserts for the game state after user2's movement : 2nd Pit
         assertEquals(List.of(1, 8, 8, 7, 7, 1), moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getSmallPits());
         assertEquals(2, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
         assertEquals(List.of(1, 0, 9, 9, 9, 8), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
         assertEquals(2, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(jane.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+        assertEquals(user1.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+
+        cleanTestData(user1, user2, game);
     }
 
     @DisplayName("This scenario shows stolen seed situation")
@@ -110,58 +122,58 @@ class GameTest {
     void givenStolenSeedScenario_whenGamePlayed_thenReturnValidStatus() {
 
         //Create Users
-        CreateUserServiceOutput jane = userService.createUser(CreateUserServiceInput.builder()
-                .user(User.builder().userName("Jane2").build()).build());
-        CreateUserServiceOutput emma = userService.createUser(CreateUserServiceInput.builder()
-                .user(User.builder().userName("Emma2").build()).build());
+        CreateUserServiceOutput user1 = userService.createUser(CreateUserServiceInput.builder()
+                .user(User.builder().userName("user12").build()).build());
+        CreateUserServiceOutput user2 = userService.createUser(CreateUserServiceInput.builder()
+                .user(User.builder().userName("user22").build()).build());
 
         //Create Game
         CreateGameServiceOutput game = gameService.createGame(CreateGameServiceInput.builder()
-                .firstPlayerId(jane.getUser().getUserId())
-                .secondPlayerId(emma.getUser().getUserId())
+                .firstPlayerId(user1.getUser().getUserId())
+                .secondPlayerId(user2.getUser().getUserId())
                 .build());
 
-        //Jane movement: 6th Pit
+        //user1 movement: 6th Pit
         MoveGameServiceOutput moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(jane.getUser().getUserId())
+                        .playerId(user1.getUser().getUserId())
                         .position(6).build())
                 .build());
 
 
-        //Emma movement: 1st Pit
+        //user2 movement: 1st Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(emma.getUser().getUserId())
+                        .playerId(user2.getUser().getUserId())
                         .position(1).build())
                 .build());
 
 
-        //Jane movement: 1st Pit
+        //user1 movement: 1st Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(jane.getUser().getUserId())
+                        .playerId(user1.getUser().getUserId())
                         .position(1).build())
                 .build());
 
 
-        //Emma movement: 2nd Pit
+        //user2 movement: 2nd Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(emma.getUser().getUserId())
+                        .playerId(user2.getUser().getUserId())
                         .position(2).build())
                 .build());
 
 
-        //Jane movement: 3rd Pit
+        //user1 movement: 3rd Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(jane.getUser().getUserId())
+                        .playerId(user1.getUser().getUserId())
                         .position(3).build())
                 .build());
 
@@ -169,13 +181,13 @@ class GameTest {
         assertEquals(3, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
         assertEquals(List.of(2, 1, 10, 10, 9, 8), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
         assertEquals(2, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(emma.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+        assertEquals(user2.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
 
-        //Emma movement: 3rd Pit
+        //user2 movement: 3rd Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(emma.getUser().getUserId())
+                        .playerId(user2.getUser().getUserId())
                         .position(3).build())
                 .build());
 
@@ -183,13 +195,13 @@ class GameTest {
         assertEquals(3, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
         assertEquals(List.of(2, 1, 0, 11, 10, 9), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
         assertEquals(3, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(jane.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+        assertEquals(user1.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
 
-        //Jane movement: 1st Pit
+        //user1 movement: 1st Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(jane.getUser().getUserId())
+                        .playerId(user1.getUser().getUserId())
                         .position(1).build())
                 .build());
 
@@ -197,13 +209,13 @@ class GameTest {
         assertEquals(3, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
         assertEquals(List.of(2, 1, 0, 11, 10, 9), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
         assertEquals(3, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(emma.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+        assertEquals(user2.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
 
-        //Emma movement: 1st Pit (Stolen seed situation)
+        //user2 movement: 1st Pit (Stolen seed situation)
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(emma.getUser().getUserId())
+                        .playerId(user2.getUser().getUserId())
                         .position(1).build())
                 .build());
 
@@ -211,7 +223,9 @@ class GameTest {
         assertEquals(3, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
         assertEquals(List.of(0, 2, 0, 11, 10, 9), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
         assertEquals(13, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(jane.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+        assertEquals(user1.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+
+        cleanTestData(user1, user2, game);
     }
 
     @Test
@@ -219,22 +233,22 @@ class GameTest {
     void givenGameWithExtraMoveScenario_whenPlayerEarnsExtraMove_thenGameAllowsExtraMove() {
 
         //Create Users
-        CreateUserServiceOutput jane = userService.createUser(CreateUserServiceInput.builder()
-                .user(User.builder().userName("Jane3").build()).build());
-        CreateUserServiceOutput emma = userService.createUser(CreateUserServiceInput.builder()
-                .user(User.builder().userName("Emma3").build()).build());
+        CreateUserServiceOutput user1 = userService.createUser(CreateUserServiceInput.builder()
+                .user(User.builder().userName("user13").build()).build());
+        CreateUserServiceOutput user2 = userService.createUser(CreateUserServiceInput.builder()
+                .user(User.builder().userName("user23").build()).build());
 
         //Create Game
         CreateGameServiceOutput game = gameService.createGame(CreateGameServiceInput.builder()
-                .firstPlayerId(jane.getUser().getUserId())
-                .secondPlayerId(emma.getUser().getUserId())
+                .firstPlayerId(user1.getUser().getUserId())
+                .secondPlayerId(user2.getUser().getUserId())
                 .build());
 
-        //Jane movement: 1st Pit
+        //user1 movement: 1st Pit
         MoveGameServiceOutput moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(jane.getUser().getUserId())
+                        .playerId(user1.getUser().getUserId())
                         .position(1).build())
                 .build());
 
@@ -242,13 +256,13 @@ class GameTest {
         assertEquals(1, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
         assertEquals(List.of(6, 6, 6, 6, 6, 6), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
         assertEquals(0, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(jane.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+        assertEquals(user1.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
 
-        //Jane movement: 2nd Pit
+        //user1 movement: 2nd Pit
         moveGameServiceOutput = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(game.getGame().getGameId())
                 .movement(Movement.builder()
-                        .playerId(jane.getUser().getUserId())
+                        .playerId(user1.getUser().getUserId())
                         .position(2).build())
                 .build());
 
@@ -256,7 +270,15 @@ class GameTest {
         assertEquals(2, moveGameServiceOutput.getGame().getFirstPlayer().getBoard().getBigPit());
         assertEquals(List.of(7, 7, 6, 6, 6, 6), moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getSmallPits());
         assertEquals(0, moveGameServiceOutput.getGame().getSecondPlayer().getBoard().getBigPit());
-        assertEquals(emma.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
+        assertEquals(user2.getUser().getUserId(), moveGameServiceOutput.getGame().getActivePlayerId());
 
+        cleanTestData(user1, user2, game);
+    }
+
+
+    private void cleanTestData(CreateUserServiceOutput user1, CreateUserServiceOutput user2, CreateGameServiceOutput game) {
+        userRepository.deleteById(user1.getUser().getUserId());
+        userRepository.deleteById(user2.getUser().getUserId());
+        gameRepository.deleteById(game.getGame().getGameId());
     }
 }

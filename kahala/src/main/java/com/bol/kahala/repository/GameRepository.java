@@ -2,27 +2,13 @@ package com.bol.kahala.repository;
 
 import com.bol.kahala.model.domain.Game;
 import com.bol.kahala.service.exception.GameNotFoundException;
+import org.springframework.data.repository.CrudRepository;
 
 /**
  * This interface defines the contract for managing game data in the repository.
  */
-public interface GameRepository {
+public interface GameRepository extends CrudRepository<Game, String> {
 
-    /**
-     * Saves the provided game in the repository.
-     *
-     * @param game The game to be saved.
-     */
-    void saveGame(Game game);
-
-    /**
-     * Retrieves a game by its unique identifier.
-     *
-     * @param gameId The unique identifier of the game to retrieve.
-     * @return The retrieved game.
-     * @throws GameNotFoundException If the game with the specified ID is not found.
-     */
-    Game findGameById(String gameId) throws GameNotFoundException;
 }
 
 
