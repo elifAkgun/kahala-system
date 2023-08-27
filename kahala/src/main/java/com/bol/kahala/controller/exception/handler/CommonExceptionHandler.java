@@ -15,13 +15,23 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Optional;
 
+/**
+ * This class serves as a global exception handler for common exceptions that can occur
+ * across the application. It provides handling for validation errors, invalid format errors,
+ * and runtime exceptions.
+ */
 @ControllerAdvice
 @Order
 public class CommonExceptionHandler {
 
+    // Constants for error messages
     public static final String AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER = "An error happened, please try again later.";
     public static final String UNDEFINED = "undefined";
 
+    /**
+     * Utility method to extract error details from an ObjectError and create a
+     * MethodArgumentNotValidErrorResponse instance.
+     */
     private static MethodArgumentNotValidErrorResponse getErrorDto(ObjectError error) {
         String field = error instanceof FieldError fieldError ? fieldError.getField() : null;
         String rejectedValue = error instanceof FieldError fieldError ? String.valueOf(fieldError.getRejectedValue()) : null;
@@ -33,6 +43,10 @@ public class CommonExceptionHandler {
                 error.getDefaultMessage());
     }
 
+    /**
+     * Handles MethodArgumentNotValidException by returning a MethodArgumentNotValidErrorResponse.
+     * This response includes details about the validation errors.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
@@ -49,6 +63,10 @@ public class CommonExceptionHandler {
                 UNDEFINED, UNDEFINED, AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER);
     }
 
+    /**
+     * Handles HttpMessageNotReadableException by returning an ErrorResponse.
+     * This response includes a general error message for invalid format errors.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseBody
@@ -57,6 +75,10 @@ public class CommonExceptionHandler {
         return new ErrorResponse(ex.getMessage());
     }
 
+    /**
+     * Handles RuntimeException by returning an ErrorResponse.
+     * This response includes a general error message for runtime exceptions.
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
     @ResponseBody
@@ -65,3 +87,4 @@ public class CommonExceptionHandler {
         return new ErrorResponse(AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER);
     }
 }
+

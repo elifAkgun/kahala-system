@@ -1,14 +1,14 @@
 package com.bol.kahala.service.impl;
 
-import com.bol.kahala.constant.GameConstants;
 import com.bol.kahala.model.domain.*;
 import com.bol.kahala.repository.GameRepository;
 import com.bol.kahala.service.UserService;
 import com.bol.kahala.service.exception.GameNotFoundException;
+import com.bol.kahala.service.exception.InvalidGameException;
 import com.bol.kahala.service.exception.InvalidPlayerException;
 import com.bol.kahala.service.input.*;
 import com.bol.kahala.service.output.*;
-import com.bol.kahala.validation.ValidationMessages;
+import com.bol.kahala.validation.ValidationMessagesUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,7 +42,7 @@ class GameServiceImplTest {
     GameRepository gameRepository;
 
     @Mock
-    ValidationMessages validationMessages;
+    ValidationMessagesUtil validationMessagesUtil;
 
     @Test
      void givenGameObject_whenCreateGameCalled_thenCallSaveGame() {
@@ -396,19 +396,18 @@ class GameServiceImplTest {
         GameResetServiceOutput resetOutput = gameService.resetGame(resetInput);
 
         // Then
-        assertThat(resetOutput.getGame()).isEqualTo(mockedGame);
         // Check that the small pits of both players are filled with initial seeds
-        assertThat(mockedGame.getFirstPlayer().getBoard().getSmallPits())
+        assertThat(resetOutput.getGame().getFirstPlayer().getBoard().getSmallPits())
                 .isEqualTo(List.of(6, 6, 6, 6, 6, 6));
-        assertThat(mockedGame.getSecondPlayer().getBoard().getSmallPits())
+        assertThat(resetOutput.getGame().getSecondPlayer().getBoard().getSmallPits())
                 .isEqualTo(List.of(6, 6, 6, 6, 6, 6));
 
         // Check that the big pits are reset to 0
-        assertThat(mockedGame.getFirstPlayer().getBoard().getBigPit()).isZero();
-        assertThat(mockedGame.getSecondPlayer().getBoard().getBigPit()).isZero();
+        assertThat(resetOutput.getGame().getFirstPlayer().getBoard().getBigPit()).isZero();
+        assertThat(resetOutput.getGame().getSecondPlayer().getBoard().getBigPit()).isZero();
 
         // Verify that the game is saved after resetting
-        verify(gameRepository).saveGame(mockedGame);
+        verify(gameRepository).saveGame(resetOutput.getGame());
     }
 
 
@@ -424,7 +423,7 @@ class GameServiceImplTest {
 
         // When and Then
         assertThatThrownBy(() -> gameService.resetGame(resetInput))
-                .isInstanceOf(InvalidPlayerException.class);
+                .isInstanceOf(InvalidGameException.class);
     }
 
     @Test
@@ -455,6 +454,6 @@ class GameServiceImplTest {
 
         // When and Then
         assertThatThrownBy(() -> gameService.getGame(gameStatusInput))
-                .isInstanceOf(InvalidPlayerException.class);
+                .isInstanceOf(InvalidGameException.class);
     }
 }

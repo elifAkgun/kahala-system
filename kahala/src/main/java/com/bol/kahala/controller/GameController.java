@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
+/**
+ * This class defines the endpoints for managing game-related operations.
+ */
 @RestController
 @RequestMapping("/games")
 @AllArgsConstructor
@@ -29,6 +32,12 @@ public class GameController {
 
     private final GameService gameService;
 
+    /**
+     * Creates a new game using the provided player IDs.
+     *
+     * @param gameRequest The request containing player IDs.
+     * @return A ResponseEntity containing the created game response.
+     */
     @PostMapping
     public ResponseEntity<GameResponse> createGame(@RequestBody @Valid GameRequest gameRequest) {
         CreateGameServiceOutput createdGame = gameService.createGame(CreateGameServiceInput.builder()
@@ -42,6 +51,13 @@ public class GameController {
                 : ResponseEntity.badRequest().build();
     }
 
+    /**
+     * Moves the game state based on the provided game ID and move details.
+     *
+     * @param gameId         The ID of the game to be moved.
+     * @param moveGameRequest The request containing move details.
+     * @return A ResponseEntity containing the updated game response.
+     */
     @PostMapping("/move/{gameId}")
     public ResponseEntity<GameResponse> moveGame(@PathVariable("gameId") @Valid @NotNull String gameId,
                                                  @RequestBody @Valid MoveGameRequest moveGameRequest) {
@@ -57,6 +73,12 @@ public class GameController {
                 : ResponseEntity.badRequest().build();
     }
 
+    /**
+     * Retrieves the current status of the game based on the provided game ID.
+     *
+     * @param gameId The ID of the game to retrieve the status for.
+     * @return A ResponseEntity containing the game status response.
+     */
     @GetMapping("/{gameId}")
     public ResponseEntity<GameResponse> getGame(@PathVariable @Valid String gameId) {
         GameStatusServiceOutput gameStatusServiceOutput = gameService.getGame(GameStatusServiceInput.builder()
@@ -68,6 +90,12 @@ public class GameController {
                 : ResponseEntity.badRequest().build();
     }
 
+    /**
+     * Resets the game state to its initial configuration based on the provided game ID.
+     *
+     * @param gameId The ID of the game to be reset.
+     * @return A ResponseEntity containing the reset game response.
+     */
     @PutMapping("/{gameId}")
     public ResponseEntity<GameResponse> resetGame(@Valid @PathVariable String gameId) {
         GameResetServiceOutput gameResetServiceOutput = gameService.resetGame(GameResetServiceInput.builder()

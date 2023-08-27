@@ -10,7 +10,7 @@ import com.bol.kahala.service.input.CreateUserServiceInput;
 import com.bol.kahala.service.input.UserServiceInput;
 import com.bol.kahala.service.output.CreateUserServiceOutput;
 import com.bol.kahala.service.output.UserServiceOutput;
-import com.bol.kahala.validation.ValidationMessages;
+import com.bol.kahala.validation.ValidationMessagesUtil;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class UserServiceImplTest {
     UserRepository userRepository;
 
     @Mock
-    ValidationMessages validationMessages;
+    ValidationMessagesUtil validationMessagesUtil;
 
     // JUnit test for
     @Test

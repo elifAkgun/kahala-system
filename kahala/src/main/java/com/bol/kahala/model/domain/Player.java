@@ -4,14 +4,29 @@ import lombok.*;
 
 import java.io.Serializable;
 
+/**
+ * This class represents a player in the game.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Player implements Serializable {
-    private String userId;
-    private Board board;
-    private boolean isCurrentTurn;
 
+    /**
+     * The unique identifier of the player.
+     */
+    private String userId;
+
+    /**
+     * The board associated with the player.
+     */
+    private Board board;
+
+    /**
+     * Indicates whether it's the current turn of this player.
+     */
+    private boolean isCurrentTurn;
 }
+

@@ -7,9 +7,15 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
+/**
+ * This class represents a response containing user information. It includes a reference to the user object.
+ */
 @Builder
 @Getter
 @Setter
 public class UserResponse implements Serializable {
+    /**
+     * The user object associated with the response.
+     */
     private User user;
 }

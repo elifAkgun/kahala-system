@@ -16,12 +16,22 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
+
+/**
+ * This class defines the endpoints for managing user-related operations.
+ */
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
+    /**
+     * Creates a new user using the provided user request data.
+     *
+     * @param userRequest The request containing user details.
+     * @return A ResponseEntity containing the created user response.
+     */
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest) {
         CreateUserServiceOutput userServiceOutput = userService.createUser(CreateUserServiceInput.builder()
@@ -33,6 +43,12 @@ public class UserController {
                 : ResponseEntity.badRequest().build();
     }
 
+    /**
+     * Retrieves user details based on the provided user ID.
+     *
+     * @param userId The ID of the user to retrieve details for.
+     * @return A ResponseEntity containing the user response or a not found response.
+     */
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> getUser(@PathVariable @Valid
                                                 @NotEmpty(message = "{NotEmpty.userRequest.user.userId}") String userId) {

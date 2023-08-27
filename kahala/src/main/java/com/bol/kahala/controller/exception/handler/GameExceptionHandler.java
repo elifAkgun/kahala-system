@@ -9,9 +9,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * This class serves as an exception handler for specific exceptions related to game operations.
+ * It handles the InvalidGameException by returning an ErrorResponse with a bad request status.
+ */
 @ControllerAdvice
 @Order(0)
 public class GameExceptionHandler {
+
+    /**
+     * Handles InvalidGameException by returning an ErrorResponse.
+     * This response includes the error message from the exception.
+     */
     @ExceptionHandler(InvalidGameException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
@@ -22,3 +31,4 @@ public class GameExceptionHandler {
     }
 
 }
+
