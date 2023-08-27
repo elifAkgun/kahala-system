@@ -38,24 +38,6 @@ public class GameTestDataHelper {
                     .build()))
             .isFinished(FINISHED).build();
 
-    public static final Game GAME_WITHOUT_ID = Game.builder()
-            .activePlayerId(FIRST_PLAYER_USER_ID)
-            .firstPlayer(Player.builder()
-                    .isCurrentTurn(CURRENT_TURN_TRUE)
-                    .board(Board.builder().bigPit(FIRST_BIG_PIT)
-                            .smallPits(FIRST_PLAYER_SMALL_PITS)
-                            .build())
-                    .userId(FIRST_PLAYER_USER_ID)
-                    .build())
-            .secondPlayer((Player.builder()
-                    .isCurrentTurn(CURRENT_TURN_FALSE)
-                    .board(Board.builder().bigPit(SECOND_BIG_PIT)
-                            .smallPits(SECOND_PLAYER_SMALL_PITS)
-                            .build())
-                    .userId(SECOND_PLAYER_USER_ID)
-                    .build()))
-            .isFinished(FINISHED).build();
-
 
     public static Game getPlayedGame() {
         List<Integer> firstPlayerSmallPits = List.of(2, 4, 4, 0, 1, 4);
@@ -79,4 +61,7 @@ public class GameTestDataHelper {
 
         return new Game(GAME_ID, firstPlayer, secondPlayer, FIRST_PLAYER_USER_ID, false);
     }
+
+
+
 }

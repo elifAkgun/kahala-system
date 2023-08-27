@@ -21,9 +21,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static com.bol.kahala.constant.GameConstants.SEED_NUMBER;
+import static com.bol.kahala.constant.GameConstants.*;
 import static com.bol.kahala.validation.ValidationMessages.*;
 
 /**
@@ -33,6 +34,7 @@ import static com.bol.kahala.validation.ValidationMessages.*;
 @RequiredArgsConstructor
 @Slf4j
 public class GameServiceImpl implements GameService {
+
 
     private final GameRepository gameRepository;
     private final UserService userService;
@@ -125,8 +127,8 @@ public class GameServiceImpl implements GameService {
         }
 
         // Create copies of the current player's and opponent player's small pits
-        List<Integer> currentPlayerSmallPits = new ArrayList<>(currentPlayer.getBoard().getSmallPits());
-        List<Integer> opponentPlayerSmallPits = new ArrayList<>(opponentPlayer.getBoard().getSmallPits());
+        List<Integer> currentPlayerSmallPits = currentPlayer.getBoard().getSmallPits();
+        List<Integer> opponentPlayerSmallPits = opponentPlayer.getBoard().getSmallPits();
 
         int currentPitIndex = input.getMovement().getPosition() - 1;
         int stonesInHand = currentPlayerSmallPits.get(currentPitIndex);
@@ -134,16 +136,24 @@ public class GameServiceImpl implements GameService {
 
         // Distribute the stones in the hand to the pits based on game rules
         while (stonesInHand > 0) {
-            currentPitIndex = (currentPitIndex + 1) % 14;
-            if (currentPitIndex != 13) {
-                if (currentPitIndex == GameConstants.PIT_NUMBER) {
+            currentPitIndex = (currentPitIndex + 1) % BOARD_TOTAL_PITS_COUNT;
+
+            //currentPitIndex is not opponent player big pit's index
+            if (currentPitIndex != BOARD_TOTAL_PITS_COUNT -1) {
+
+                //currentPitIndex is player big pit's index
+                if (currentPitIndex == GameConstants.SMALL_PIT_NUMBER) {
                     currentPlayer.getBoard().increaseBigPit();
                 } else {
-                    if (currentPitIndex < GameConstants.PIT_NUMBER) {
+
+                    //currentPitIndex is in the player small pits
+                    if (currentPitIndex < GameConstants.SMALL_PIT_NUMBER) {
                         currentPlayerSmallPits.set(currentPitIndex,
                                 currentPlayerSmallPits.get(currentPitIndex) + 1);
-                    } else {
-                        int opponentPitIndex = currentPitIndex - GameConstants.PIT_NUMBER - 1;
+                    }
+                    //currentPitIndex is in the opponent small pits
+                    else {
+                        int opponentPitIndex = currentPitIndex - GameConstants.SMALL_PIT_NUMBER - 1;
                         opponentPlayerSmallPits.set(opponentPitIndex,
                                 opponentPlayer.getBoard().getSmallPits().get(opponentPitIndex) + 1);
                     }
@@ -190,22 +200,20 @@ public class GameServiceImpl implements GameService {
         Player opponentPlayer = game.getFirstPlayer().isCurrentTurn() ? game.getSecondPlayer() : game.getFirstPlayer();
 
         // Update the active player's board
-        activePlayer.getBoard().setSmallPits(new ArrayList<>(currentPlayerSmallPits));
+        activePlayer.getBoard().setSmallPits(currentPlayerSmallPits);
         activePlayer.getBoard().setBigPit(currentPlayerBigPit);
 
         // Update the opponent player's board
-        opponentPlayer.getBoard().setSmallPits(new ArrayList<>(opponentPlayerSmallPits));
+        opponentPlayer.getBoard().setSmallPits(opponentPlayerSmallPits);
     }
 
 
     private static Game createInitialGameInstance(String firstPlayerId, String secondPlayerId) {
-        List<Integer> initialSmallPits = List.of(SEED_NUMBER, SEED_NUMBER, SEED_NUMBER,
-                SEED_NUMBER, SEED_NUMBER, SEED_NUMBER);
         int initialBigPit = 0;
 
         // Initialize the game with the board and the current user as the first user
-        Board firstPlayerBoard = new Board(initialSmallPits, initialBigPit);
-        Board secondPlayerBoard = new Board(initialSmallPits, initialBigPit);
+        Board firstPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
+        Board secondPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
 
         Player firstPlayer = Player.builder()
                 .isCurrentTurn(true)
@@ -278,9 +286,9 @@ public class GameServiceImpl implements GameService {
         int capturedStones = 0;
 
         // Check if the last played pit is on the active player's side and contains only one stone
-        if (currentPitIndex < GameConstants.PIT_NUMBER && currentPlayerSmallPits.get(currentPitIndex) == 1) {
+        if (currentPitIndex < GameConstants.SMALL_PIT_NUMBER && currentPlayerSmallPits.get(currentPitIndex) == 1) {
             // Calculate the index of the opposite pit on the opponent's side
-            int oppositeIndex = GameConstants.PIT_NUMBER - currentPitIndex - 1;
+            int oppositeIndex = GameConstants.SMALL_PIT_NUMBER - currentPitIndex - 1;
 
             // Capture the stones from both pits and update the counts
             capturedStones = currentPlayerSmallPits.get(currentPitIndex) + opponentPlayerSmallPits.get(oppositeIndex);
@@ -296,7 +304,7 @@ public class GameServiceImpl implements GameService {
         Player firstPlayer = game.getFirstPlayer();
         Player secondPlayer = game.getSecondPlayer();
 
-        if (currentPitIndex != GameConstants.PIT_NUMBER) {
+        if (currentPitIndex != GameConstants.SMALL_PIT_NUMBER) {
             // Swap the turn between players
             firstPlayer.setCurrentTurn(!firstPlayer.isCurrentTurn());
             secondPlayer.setCurrentTurn(!secondPlayer.isCurrentTurn());

@@ -15,12 +15,17 @@ public class GameConstants {
     }
 
     /**
-     * The number of pits on each player's board.
+     * The number of small pits on each player's board.
      */
-    public static final int PIT_NUMBER = 6;
+    public static final int SMALL_PIT_NUMBER = 6;
 
     /**
-     * The number of seed items in each pit.
+     * The count of seed items in each small pit.
      */
-    public static final int SEED_NUMBER = 6;
+    public static final int SEED_COUNT = 6;
+
+    /**
+     * The number of pits on the board.
+     */
+    public static final int BOARD_TOTAL_PITS_COUNT = 14;
 }

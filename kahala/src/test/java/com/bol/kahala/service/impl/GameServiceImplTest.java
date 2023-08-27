@@ -15,12 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import static com.bol.kahala.constant.GameConstants.PIT_NUMBER;
-import static com.bol.kahala.constant.GameConstants.SEED_NUMBER;
+import static com.bol.kahala.constant.GameConstants.SMALL_PIT_NUMBER;
+import static com.bol.kahala.constant.GameConstants.SEED_COUNT;
 import static com.bol.kahala.helper.GameTestDataHelper.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -45,7 +43,7 @@ class GameServiceImplTest {
     ValidationMessagesUtil validationMessagesUtil;
 
     @Test
-     void givenGameObject_whenCreateGameCalled_thenCallSaveGame() {
+    void givenGameObject_whenCreateGameCalled_thenCallSaveGame() {
         // given- precondition or setup
         doNothing().when(gameRepository).saveGame(any(Game.class));
 
@@ -67,7 +65,7 @@ class GameServiceImplTest {
     }
 
     @Test
-     void givenGameObjectHasSameUserIds_whenCreateGameCalled_thenThrowInvalidUserException() {
+    void givenGameObjectHasSameUserIds_whenCreateGameCalled_thenThrowInvalidUserException() {
         // given- precondition or setup
         CreateGameServiceInput gameDto = CreateGameServiceInput.builder()
                 .firstPlayerId(FIRST_PLAYER_USER_ID)
@@ -84,7 +82,7 @@ class GameServiceImplTest {
     }
 
     @Test
-     void givenGameObject_whenCreateGameCalled_thenReturnGameWithInitialProperties() {
+    void givenGameObject_whenCreateGameCalled_thenReturnGameWithInitialProperties() {
         // given- precondition or setup
         CreateGameServiceInput gameDto = CreateGameServiceInput.builder()
                 .firstPlayerId(FIRST_PLAYER_USER_ID)
@@ -106,7 +104,7 @@ class GameServiceImplTest {
         // when - action or the behaviour that we are going test
         CreateGameServiceOutput createGameServiceOutput = gameService.createGame(gameDto);
         Game game = createGameServiceOutput.getGame();
-        List<Integer> expectedInitialSmallPits = new ArrayList<>(Collections.nCopies(PIT_NUMBER, SEED_NUMBER));
+        List<Integer> expectedInitialSmallPits = new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT));
 
 
         // then - verify the output
@@ -123,17 +121,16 @@ class GameServiceImplTest {
     }
 
     @Test
-     void givenInitialGameObject_whenMoveGameCalled_returnNextGameBoardPosition() throws GameNotFoundException {
+    void givenInitialGameObject_whenMoveGameCalled_returnNextGameBoardPosition() throws GameNotFoundException {
         // given- precondition or setup
         String gameId = GAME_ID;
 
         // Initialize the board with a specific stone distribution
-        List<Integer> initialSmallPits = List.of(6, 6, 6, 6, 6, 6);
         int initialBigPit = 0;
 
         // Initialize the actualGame with the board and the current user as the second user
-        Board firstPlayerBoard = new Board(initialSmallPits, initialBigPit);
-        Board secondPlayerBoard = new Board(initialSmallPits, initialBigPit);
+        Board firstPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
+        Board secondPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
 
         Player firstPlayer = Player.builder()
                 .isCurrentTurn(true)
@@ -172,17 +169,16 @@ class GameServiceImplTest {
     }
 
     @Test
-     void givenInitialGameObject_whenMoveGameFrom6thPit_returnNextGameBoardPosition() throws GameNotFoundException {
+    void givenInitialGameObject_whenMoveGameFrom6thPit_returnNextGameBoardPosition() throws GameNotFoundException {
         // given- precondition or setup
         String gameId = GAME_ID;
 
         // Initialize the board with a specific stone distribution
-        List<Integer> initialSmallPits = List.of(6, 6, 6, 6, 6, 6);
         int initialBigPit = 0;
 
         // Initialize the actualGame with the board and the current user as the second user
-        Board firstPlayerBoard = new Board(initialSmallPits, initialBigPit);
-        Board secondPlayerBoard = new Board(initialSmallPits, initialBigPit);
+        Board firstPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
+        Board secondPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
 
         Player firstPlayer = Player.builder()
                 .isCurrentTurn(true)
@@ -221,11 +217,11 @@ class GameServiceImplTest {
     }
 
     @Test
-     void givenGameWithStones_whenMoveGameCaptureOpponentStones_returnUpdatedGameBoard() throws GameNotFoundException {
+    void givenGameWithStones_whenMoveGameCaptureOpponentStones_returnUpdatedGameBoard() throws GameNotFoundException {
         // Given
         // Initialize the board with a specific stone distribution
-        List<Integer> firstPlayerSmallPits = List.of(1, 0, 2, 0, 8, 7);
-        List<Integer> secondPlayerSmallPits = List.of(1, 0, 3, 7, 7, 6);
+        List<Integer> firstPlayerSmallPits = new ArrayList<>(Arrays.asList(1, 0, 2, 0, 8, 7));
+        List<Integer> secondPlayerSmallPits = new ArrayList<>(Arrays.asList(1, 0, 3, 7, 7, 6));
         int firstPlayerBigPit = 3;
         int secondPlayerBigPit = 2;
 
@@ -271,13 +267,14 @@ class GameServiceImplTest {
 
 
     @Test
-     void givenGameWithStones_whenMovementEndWithBigPit_thenContinueWithSameUser() throws GameNotFoundException {
+    void givenGameWithStones_whenMovementEndWithBigPit_thenContinueWithSameUser() throws GameNotFoundException {
         // Given
         String gameId = GAME_ID;
 
         // Initialize the board with a specific stone distribution
-        List<Integer> firstPlayerSmallPits = List.of(4, 4, 4, 4, 4, 4);
-        List<Integer> secondPlayerSmallPits = List.of(4, 4, 4, 4, 4, 4);
+        List<Integer> firstPlayerSmallPits = new ArrayList<>(Arrays.asList(4, 4, 4, 4, 4, 4));
+        List<Integer> secondPlayerSmallPits = new ArrayList<>(Arrays.asList(4, 4, 4, 4, 4, 4));
+
         int firstPlayerBigPit = 0;
         int secondPlayerBigPit = 0;
 
@@ -324,13 +321,14 @@ class GameServiceImplTest {
 
 
     @Test
-     void givenGameWithStones_whenThereIsNoStone_thenGameOver() throws GameNotFoundException {
+    void givenGameWithStones_whenThereIsNoStone_thenGameOver() throws GameNotFoundException {
         // Given
         String gameId = GAME_ID;
 
         // Initialize the board with a specific stone distribution
-        List<Integer> firstPlayerSmallPits = List.of(0, 1, 0, 0, 0, 1);
-        List<Integer> secondPlayerSmallPits = List.of(1, 0, 0, 0, 0, 0);
+        List<Integer> firstPlayerSmallPits = new ArrayList<>(Arrays.asList(0, 1, 0, 0, 0, 1));
+        List<Integer> secondPlayerSmallPits = new ArrayList<>(Arrays.asList(1, 0, 0, 0, 0, 0));
+
         int firstPlayerBigPit = 30;
         int secondPlayerBigPit = 20;
 
@@ -359,6 +357,7 @@ class GameServiceImplTest {
         //After capturing scenario
         List<Integer> expectedFirstUserSmallPits = List.of(0, 1, 0, 0, 0, 1);
         List<Integer> expectedSecondUserSmallPits = List.of(0, 0, 0, 0, 0, 0);
+
         int expectedFirstUserBigPit = 32;
         int expectedSecondUserBigPit = 21;
         boolean expectedGameIsFinished = true;
@@ -381,7 +380,7 @@ class GameServiceImplTest {
 
 
     @Test
-     void givenValidGameId_whenResetGameCalled_thenGameResetAndReturned() throws GameNotFoundException {
+    void givenValidGameId_whenResetGameCalled_thenGameResetAndReturned() throws GameNotFoundException {
         // Given
 
         Game mockedGame = getPlayedGame();
@@ -411,9 +410,8 @@ class GameServiceImplTest {
     }
 
 
-
     @Test
-     void givenInvalidGameId_whenResetGameCalled_thenThrowInvalidPlayerException() throws GameNotFoundException {
+    void givenInvalidGameId_whenResetGameCalled_thenThrowInvalidPlayerException() throws GameNotFoundException {
         // Given
         String invalidGameId = "invalidGame";
         GameResetServiceInput resetInput = GameResetServiceInput.builder().gameId(invalidGameId).build();
@@ -427,7 +425,7 @@ class GameServiceImplTest {
     }
 
     @Test
-     void givenValidGameId_whenGetGameCalled_thenRetrieveGameStatus() throws GameNotFoundException {
+    void givenValidGameId_whenGetGameCalled_thenRetrieveGameStatus() throws GameNotFoundException {
         // Given
         String gameId = "validGame";
         GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(gameId).build();
@@ -444,7 +442,7 @@ class GameServiceImplTest {
     }
 
     @Test
-     void givenInvalidGameId_whenGetGameCalled_thenThrowInvalidPlayerException() throws GameNotFoundException {
+    void givenInvalidGameId_whenGetGameCalled_thenThrowInvalidPlayerException() throws GameNotFoundException {
         // Given
         String invalidGameId = "invalidGame";
         GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(invalidGameId).build();
