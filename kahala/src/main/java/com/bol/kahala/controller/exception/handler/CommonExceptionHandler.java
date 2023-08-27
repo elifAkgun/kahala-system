@@ -27,6 +27,7 @@ public class CommonExceptionHandler {
     // Constants for error messages
     public static final String AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER = "An error happened, please try again later.";
     public static final String UNDEFINED = "undefined";
+    public static final String INVALID_JSON_BODY = "Invalid JSON body.";
 
     /**
      * Utility method to extract error details from an ObjectError and create a
@@ -72,7 +73,7 @@ public class CommonExceptionHandler {
     @ResponseBody
     public ErrorResponse handleInvalidFormatExceptions(HttpMessageNotReadableException ex) {
         ex.printStackTrace();
-        return new ErrorResponse(ex.getMessage());
+        return new ErrorResponse(INVALID_JSON_BODY);
     }
 
     /**

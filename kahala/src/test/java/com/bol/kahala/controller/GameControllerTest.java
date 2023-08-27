@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static com.bol.kahala.helper.ErrorMessages.*;
 import static com.bol.kahala.helper.GameTestDataHelper.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -47,7 +48,7 @@ class GameControllerTest {
     private GameService gameService;
 
     @Test
-     void givenGameRequestHasNoValue_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenGameRequestHasNoValue_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         GameRequest gameRequest = GameRequest.builder().build();
 
@@ -63,7 +64,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenGameRequestHasNoSecondPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenGameRequestHasNoSecondPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         GameRequest gameRequest = GameRequest.builder()
                 .firstPlayerId("1234").build();
@@ -81,7 +82,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenGameRequestHasNoFirstPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenGameRequestHasNoFirstPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         GameRequest gameRequest = GameRequest.builder()
                 .secondPlayerId("1234").build();
@@ -98,7 +99,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenGameRequestHasEmptyFirstPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenGameRequestHasEmptyFirstPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         GameRequest gameRequest = GameRequest.builder()
                 .firstPlayerId("")
@@ -116,7 +117,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenGameRequestHasEmptySecondPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenGameRequestHasEmptySecondPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         GameRequest gameRequest = GameRequest.builder()
                 .firstPlayerId("").build();
@@ -133,7 +134,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenValidGameRequest_whenCreateGameCalled_thenReturnGameResponse() throws Exception {
+    void givenValidGameRequest_whenCreateGameCalled_thenReturnGameResponse() throws Exception {
         // given- precondition or setup
         GameRequest gameRequest = GameRequest.builder()
                 .firstPlayerId(FIRST_PLAYER_USER_ID)
@@ -156,6 +157,7 @@ class GameControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.header().string("Location", "/games/" + GAME_ID))
                 .andExpect(jsonPath("$.game.gameId", is(GAME_ID)))
+                .andExpect(jsonPath("$.game.winnerPlayerId").isEmpty())
                 .andExpect(jsonPath("$.game.activePlayerId", is(FIRST_PLAYER_USER_ID)))
                 .andExpect(jsonPath("$.game.finished", is(FINISHED)))
                 .andExpect(jsonPath("$.game.firstPlayer.userId", is(FIRST_PLAYER_USER_ID)))
@@ -169,7 +171,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenRequestHasNoGameId_whenMoveGameCalled_thenReturnStatusCode404() throws Exception {
+    void givenRequestHasNoGameId_whenMoveGameCalled_thenReturnStatusCode404() throws Exception {
         // given- precondition or setup
         MoveGameRequest moveGameRequest = null;
 
@@ -184,7 +186,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenMoveGameRequestHasNoPlayerId_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenMoveGameRequestHasNoPlayerId_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         MoveGameRequest moveGameRequest = MoveGameRequest.builder().playerId(null).pitNumber(4).build();
 
@@ -200,7 +202,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenMoveGameRequestPitNumberIsMoreThan6_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenMoveGameRequestPitNumberIsMoreThan6_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         MoveGameRequest moveGameRequest = MoveGameRequest.builder()
                 .playerId(FIRST_PLAYER_USER_ID)
@@ -220,7 +222,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenMoveGameRequestPitNumberIsLessThan1_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenMoveGameRequestPitNumberIsLessThan1_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         MoveGameRequest moveGameRequest = MoveGameRequest.builder()
                 .playerId(FIRST_PLAYER_USER_ID)
@@ -240,7 +242,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenMoveGameRequestPitNumberIsNotInteger_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenMoveGameRequestPitNumberIsNotInteger_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         MoveGameRequest moveGameRequest = MoveGameRequest.builder()
                 .playerId(FIRST_PLAYER_USER_ID)
@@ -259,7 +261,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenMoveGameServiceThrowsInvalidGameException_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenMoveGameServiceThrowsInvalidGameException_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         given(gameService.moveGame(any(MoveGameServiceInput.class)))
                 .willThrow(new InvalidGameException(MOCK_MESSAGE));
@@ -277,7 +279,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenMoveGameServiceThrowsInvalidPlayerException_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
+    void givenMoveGameServiceThrowsInvalidPlayerException_whenMoveGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
         given(gameService.moveGame(any(MoveGameServiceInput.class)))
                 .willThrow(new InvalidPlayerException(MOCK_MESSAGE));
@@ -295,7 +297,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenMoveGameServiceThrowsUnHandledException_whenMoveGameCalled_thenReturnTryAgainErrorResponse() throws Exception {
+    void givenMoveGameServiceThrowsUnHandledException_whenMoveGameCalled_thenReturnTryAgainErrorResponse() throws Exception {
         // given- precondition or setup
         given(gameService.moveGame(any(MoveGameServiceInput.class)))
                 .willThrow(new NullPointerException(MOCK_MESSAGE));
@@ -315,7 +317,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenValidMoveGameRequest_whenMoveGameCalled_thenReturnGameResponse() throws Exception {
+    void givenValidMoveGameRequest_whenMoveGameCalled_thenReturnGameResponse() throws Exception {
         // given- precondition or setup
         Game game = Game.builder().gameId(GAME_ID).build();
         given(gameService.moveGame(any(MoveGameServiceInput.class)))
@@ -337,7 +339,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenValidGameId_whenGetGameCalled_thenReturnGameResponse() throws Exception {
+    void givenValidGameId_whenGetGameCalled_thenReturnGameResponse() throws Exception {
         // Given
         Game game = Game.builder().gameId("game123").build();
         given(gameService.getGame(any(GameStatusServiceInput.class)))
@@ -350,7 +352,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenInvalidGameId_whenGetGameCalled_thenReturnBadRequestResponse() throws Exception {
+    void givenInvalidGameId_whenGetGameCalled_thenReturnBadRequestResponse() throws Exception {
         // Given
         given(gameService.getGame(any(GameStatusServiceInput.class)))
                 .willReturn(null);
@@ -361,7 +363,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenExceptionThrownByService_whenGetGameCalled_thenReturnInternalServerErrorResponse() throws Exception {
+    void givenExceptionThrownByService_whenGetGameCalled_thenReturnInternalServerErrorResponse() throws Exception {
         // Given
         given(gameService.getGame(any(GameStatusServiceInput.class)))
                 .willThrow(new RuntimeException("Something went wrong"));
@@ -372,7 +374,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenValidGameId_whenResetGameCalled_thenReturnOkResponse() throws Exception {
+    void givenValidGameId_whenResetGameCalled_thenReturnOkResponse() throws Exception {
         // Given
         String gameId = "validGame";
         GameResetServiceOutput resetOutput = GameResetServiceOutput.builder().game(new Game()).build();
@@ -388,7 +390,7 @@ class GameControllerTest {
     }
 
     @Test
-     void givenInvalidGameId_whenResetGameCalled_thenReturnBadRequestResponse() throws Exception {
+    void givenInvalidGameId_whenResetGameCalled_thenReturnBadRequestResponse() throws Exception {
         // Given
         String invalidGameId = "invalidGame";
 

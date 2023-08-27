@@ -59,7 +59,11 @@ public class GameTestDataHelper {
                 .userId(SECOND_PLAYER_USER_ID)
                 .build();
 
-        return new Game(GAME_ID, firstPlayer, secondPlayer, FIRST_PLAYER_USER_ID, false);
+        return Game.builder().gameId(GAME_ID)
+                .firstPlayer(firstPlayer)
+                .secondPlayer(secondPlayer).activePlayerId(FIRST_PLAYER_USER_ID)
+                .isFinished(false)
+                .winnerPlayerId(null).build();
     }
 
 

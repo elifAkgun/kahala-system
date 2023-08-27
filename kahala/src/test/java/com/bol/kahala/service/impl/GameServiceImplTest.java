@@ -144,7 +144,11 @@ class GameServiceImplTest {
                 .build();
 
         // Initialize a actualGame instance here
-        Game game = new Game(gameId, firstPlayer, secondPlayer, FIRST_PLAYER_USER_ID, false);
+        Game game =Game.builder().gameId(GAME_ID)
+                .firstPlayer(firstPlayer)
+                .secondPlayer(secondPlayer).activePlayerId(FIRST_PLAYER_USER_ID)
+                .isFinished(false)
+                .winnerPlayerId(null).build();
 
         given(gameRepository.findGameById(gameId)).willReturn(game);
 
@@ -192,7 +196,11 @@ class GameServiceImplTest {
                 .build();
 
         // Initialize a actualGame instance here
-        Game game = new Game(gameId, firstPlayer, secondPlayer, FIRST_PLAYER_USER_ID, false);
+        Game game = Game.builder().gameId(GAME_ID)
+                .firstPlayer(firstPlayer)
+                .secondPlayer(secondPlayer).activePlayerId(FIRST_PLAYER_USER_ID)
+                .isFinished(false)
+                .winnerPlayerId(null).build();
 
         given(gameRepository.findGameById(GAME_ID)).willReturn(game);
 
@@ -240,7 +248,11 @@ class GameServiceImplTest {
                 .userId(SECOND_PLAYER_USER_ID)
                 .build();
 
-        Game game = new Game(GAME_ID, firstPlayer, secondPlayer, FIRST_PLAYER_USER_ID, false);
+        Game game = Game.builder().gameId(GAME_ID)
+                .firstPlayer(firstPlayer)
+                .secondPlayer(secondPlayer).activePlayerId(FIRST_PLAYER_USER_ID)
+                .isFinished(false)
+                .winnerPlayerId(null).build();
 
         when(gameRepository.findGameById(GAME_ID)).thenReturn(game);
 
@@ -292,7 +304,11 @@ class GameServiceImplTest {
                 .userId(SECOND_PLAYER_USER_ID)
                 .build();
 
-        Game game = new Game(gameId, firstPlayer, secondPlayer, FIRST_PLAYER_USER_ID, false);
+        Game game = Game.builder().gameId(GAME_ID)
+                .firstPlayer(firstPlayer)
+                .secondPlayer(secondPlayer).activePlayerId(FIRST_PLAYER_USER_ID)
+                .isFinished(false)
+                .winnerPlayerId(null).build();
 
         when(gameRepository.findGameById(gameId)).thenReturn(game);
 
@@ -346,7 +362,11 @@ class GameServiceImplTest {
                 .userId(SECOND_PLAYER_USER_ID)
                 .build();
 
-        Game game = new Game(gameId, firstPlayer, secondPlayer, SECOND_PLAYER_USER_ID, false);
+        Game game = Game.builder().gameId(GAME_ID)
+                .firstPlayer(firstPlayer)
+                .secondPlayer(secondPlayer).activePlayerId(SECOND_PLAYER_USER_ID)
+                .isFinished(false)
+                .winnerPlayerId(null).build();
 
         // Initialize the game with the board and the current user as the second user
         when(gameRepository.findGameById(gameId)).thenReturn(game);
@@ -376,6 +396,7 @@ class GameServiceImplTest {
         assertEquals(expectedSecondUserSmallPits, actualGame.getSecondPlayer().getBoard().getSmallPits());
         assertEquals(expectedSecondUserBigPit, actualGame.getSecondPlayer().getBoard().getBigPit());
         assertEquals(expectedGameIsFinished, actualGame.isFinished());
+        assertEquals(FIRST_PLAYER_USER_ID, actualGame.getWinnerPlayerId());
     }
 
 

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Copy;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,9 +23,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static com.bol.kahala.helper.UserDataHelper.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -75,6 +79,23 @@ class UserServiceImplTest {
         assertThat(output.getUser().getPassword()).isEqualTo(PASSWORD);
         assertThat(output.getUser().getUserId()).isEqualTo(USER_ID);
 
+    }
+
+    @Test
+    public void testCreateUser_WhenUserAlreadyExists_ThrowsUserAlreadyExistException() {
+        // Given
+        String existingUserName = "existingUser";
+        User existingUser = User.builder().userName(existingUserName).build();
+        CreateUserServiceInput input = CreateUserServiceInput.builder().user(existingUser).build();
+
+        given(userRepository.findUserByUserName(existingUserName)).willReturn(existingUser);
+
+        // When and Then
+        assertThrows(UserAlreadyExistException.class, () -> {
+            userService.createUser(input);
+        });
+
+        verify(userRepository, never()).createUser(any());
     }
 
     @Test

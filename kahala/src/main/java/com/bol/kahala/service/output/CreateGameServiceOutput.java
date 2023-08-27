@@ -10,7 +10,6 @@ import lombok.Setter;
  * It contains the resulting game instance after creation.
  */
 @Getter
-@Setter
 @Builder
 public class CreateGameServiceOutput {
 

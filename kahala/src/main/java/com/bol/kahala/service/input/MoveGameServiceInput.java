@@ -15,10 +15,10 @@ public class MoveGameServiceInput {
     /**
      * The unique identifier of the game in which the move is to be made.
      */
-    String gameId;
+    private String gameId;
 
     /**
      * The movement details specifying the player and the pit for the move.
      */
-    Movement movement;
+    private Movement movement;
 }

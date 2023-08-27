@@ -62,7 +62,6 @@ public class GameServiceImpl implements GameService {
     }
 
 
-
     /**
      * Retrieves the status of a game based on the provided input parameters.
      *
@@ -105,7 +104,7 @@ public class GameServiceImpl implements GameService {
      * @param input The input parameters for the move.
      * @return The output containing the game state after the move.
      * @throws InvalidPlayerException If invalid player information is provided.
-     * @throws InvalidGameException If the game is not found or invalid.
+     * @throws InvalidGameException   If the game is not found or invalid.
      */
     @Override
     public MoveGameServiceOutput moveGame(MoveGameServiceInput input) {
@@ -139,7 +138,7 @@ public class GameServiceImpl implements GameService {
             currentPitIndex = (currentPitIndex + 1) % BOARD_TOTAL_PITS_COUNT;
 
             //currentPitIndex is not opponent player big pit's index
-            if (currentPitIndex != BOARD_TOTAL_PITS_COUNT -1) {
+            if (currentPitIndex != BOARD_TOTAL_PITS_COUNT - 1) {
 
                 //currentPitIndex is player big pit's index
                 if (currentPitIndex == GameConstants.SMALL_PIT_NUMBER) {
@@ -318,8 +317,28 @@ public class GameServiceImpl implements GameService {
         game.setActivePlayerId(nextPlayerId);
         if (gameFinished) {
             dealRemainingSeedsToPlayers(game);
+            determineWinnerAndSetWinnerId(game);
         }
     }
+
+    /**
+     * Determine the winner or tie situation and set the winnerPlayerId accordingly.
+     *
+     * @param game The game instance to evaluate.
+     */
+    public void determineWinnerAndSetWinnerId(Game game) {
+        int firstPlayerScore = game.getFirstPlayer().getBoard().getBigPit();
+        int secondPlayerScore = game.getSecondPlayer().getBoard().getBigPit();
+
+        if (firstPlayerScore > secondPlayerScore) {
+            game.setWinnerPlayerId(game.getFirstPlayer().getUserId());
+        } else if (secondPlayerScore > firstPlayerScore) {
+            game.setWinnerPlayerId(game.getSecondPlayer().getUserId());
+        } else {
+            game.setWinnerPlayerId("tie"); // Indicate a tie situation
+        }
+    }
+
 
     /**
      * Distributes the remaining stones from small pits to players' big pits.

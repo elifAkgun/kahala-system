@@ -1,5 +1,6 @@
 package com.bol.kahala.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
@@ -27,6 +28,7 @@ public class User {
     /**
      * The password of the user.
      */
+    @JsonIgnore
     private String password;
 }
 

@@ -37,4 +37,11 @@ public class Game {
      * Indicates whether the game has finished.
      */
     private boolean isFinished;
+
+    /**
+     * The ID of the winner player who has the most seeds in their big pit.
+     */
+    private String winnerPlayerId;
+
+
 }
