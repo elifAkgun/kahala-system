@@ -1,0 +1,178 @@
+{
+	"info": {
+		"_postman_id": "54b40de0-0c3c-479e-966e-edaf27888510",
+		"name": "Kahala",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15992895",
+		"_collection_link": "https://elif-team.postman.co/workspace/79636566-3e5a-4f4e-91fc-283d483bdee1/collection/15992895-54b40de0-0c3c-479e-966e-edaf27888510?action=share&source=collection_link&creator=15992895"
+	},
+	"item": [
+		{
+			"name": "Get User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:9090/kahala/users/de92501e-37be-4da4-b0af-82646a390dc3",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"kahala",
+						"users",
+						"de92501e-37be-4da4-b0af-82646a390dc3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userName\": \"first\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/kahala/users",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"kahala",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstPlayerId\": \"f22e6c36-f36b-4db6-8cce-a6b37fd4c5a0\",\n    \"secondPlayerId\": \"26fa9531-57a1-4c09-b8d6-6043f0085889\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/kahala/games",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"kahala",
+						"games"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Game",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstPlayerId\": \"123\",\n    \"secondPlayerId\": \"1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/kahala/games/61754050-9800-4da3-aa6e-4bec5ac7475e",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"kahala",
+						"games",
+						"61754050-9800-4da3-aa6e-4bec5ac7475e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Move",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"playerId\": \"685c3dda-89db-4ee4-9197-ce2a397c8766\",\n    \"pitNumber\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/kahala/games/move/61754050-9800-4da3-aa6e-4bec5ac7475e",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"kahala",
+						"games",
+						"move",
+						"61754050-9800-4da3-aa6e-4bec5ac7475e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset Game",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/kahala/games/1f94845d-e44c-4329-9eb1-6358a7fa80cd",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"kahala",
+						"games",
+						"1f94845d-e44c-4329-9eb1-6358a7fa80cd"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
