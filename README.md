@@ -246,7 +246,7 @@ To run the "kahala-system" Spring project, follow the steps below:
     - POST Move: `http://localhost:9090/kahala/games/move/GAME_ID`
     - PUT Reset Game: `http://localhost:9090/kahala/games/GAME_ID`
 
-Please ensure that you have the required JDK version and Git installed before proceeding with the installation. The provided commands assume you're using a Unix-like terminal. Adjust the commands accordingly if you're using a different environment.
+Please ensure that you have the required JDK version and Git installed before proceeding with the installation. The provided commands assume you're using a Unix-like terminal. Adjust the commands accordingly if you're using a different environment. You can also use [Kahala.postman_collection](https://github.com/elifAkgun/kahala-system/blob/main/Kahala.postman_collection.json).
 
 ---
 
