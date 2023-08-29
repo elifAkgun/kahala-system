@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisHash;
 @Builder
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 @RedisHash("game")
 public class Game {
 

@@ -3,6 +3,7 @@ package com.bol.kahala.service.input;
 import com.bol.kahala.model.domain.Movement;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * A data class representing the input for making a move in a game.
@@ -10,6 +11,7 @@ import lombok.Getter;
  */
 @Getter
 @Builder
+@ToString
 public class MoveGameServiceInput {
 
     /**

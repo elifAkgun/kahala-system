@@ -18,6 +18,10 @@ public class GameConstants {
      * The number of pits on the board.
      */
     public static final int BOARD_TOTAL_PITS_COUNT = 14;
+    /**
+     * Represents the game of TIE status
+     */
+    public static final String TIE = "TIE";
 
     /**
      * Private constructor to prevent instantiation of this utility class.

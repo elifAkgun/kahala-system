@@ -2,6 +2,7 @@ package com.bol.kahala.service.input;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * A data class representing the input for resetting a game.
@@ -9,6 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @Builder
+@ToString
 public class GameResetServiceInput {
 
     /**

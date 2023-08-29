@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.bol.kahala.util.LoggingUtil.logError;
+import static com.bol.kahala.util.LoggingUtil.logInfo;
 import static com.bol.kahala.validation.ValidationMessages.INVALID_USER_EXCEPTION_USER_NOT_FOUND_MESSAGE;
 import static com.bol.kahala.validation.ValidationMessages.USER_ALREADY_EXIST_EXCEPTION_USER_ALREADY_EXIST_MESSAGE;
 
@@ -28,43 +30,36 @@ public class UserServiceImpl implements UserService {
     private final ValidationMessagesUtil validationMessagesUtil;
     private final UserRepository userRepository;
 
-    /**
-     * Creates a new user with the provided user information.
-     *
-     * @param input The input containing user information to be created.
-     * @return The output containing the created user.
-     * @throws UserAlreadyExistException If a user with the same username already exists.
-     */
     @Override
     public CreateUserServiceOutput createUser(CreateUserServiceInput input) throws UserAlreadyExistException {
         User user = input.getUser();
         Iterable<User> userRepositoryAll = userRepository.findAll();
-        userRepositoryAll.iterator().forEachRemaining(user1 -> {
+        userRepositoryAll.forEach(user1 -> {
             if (user1.getUserName().equals(input.getUser().getUserName())) {
-                throw new UserAlreadyExistException(validationMessagesUtil.getExceptionMessage(
-                        USER_ALREADY_EXIST_EXCEPTION_USER_ALREADY_EXIST_MESSAGE, user.getUserName()));
+                String errorMessage = validationMessagesUtil.getExceptionMessage(
+                        USER_ALREADY_EXIST_EXCEPTION_USER_ALREADY_EXIST_MESSAGE, user.getUserName());
+                logError("Failed to create user. User already exists: {}", errorMessage);
+                throw new UserAlreadyExistException(errorMessage);
             }
         });
 
         User createdUser = userRepository.save(user);
+        logInfo("User created successfully: {}", createdUser);
         return CreateUserServiceOutput.builder().user(createdUser).build();
     }
 
-    /**
-     * Retrieves the user information based on the provided user ID.
-     *
-     * @param input The input containing the user ID to retrieve.
-     * @return The output containing the retrieved user information.
-     * @throws InvalidUserException If the user with the specified ID is not found.
-     */
     @Override
     public UserServiceOutput getUser(UserServiceInput input) {
         Optional<User> optionalUser = userRepository.findById(input.getUserId());
-        if (optionalUser.isPresent())
-            return UserServiceOutput.builder().user(optionalUser.get()).build();
-        else {
-            throw new InvalidUserException(validationMessagesUtil.getExceptionMessage(
-                    INVALID_USER_EXCEPTION_USER_NOT_FOUND_MESSAGE, input.getUserId()));
+        if (optionalUser.isPresent()) {
+            User retrievedUser = optionalUser.get();
+            logInfo("Retrieved user information: {}", retrievedUser);
+            return UserServiceOutput.builder().user(retrievedUser).build();
+        } else {
+            String errorMessage = validationMessagesUtil.getExceptionMessage(
+                    INVALID_USER_EXCEPTION_USER_NOT_FOUND_MESSAGE, input.getUserId());
+            logError("Failed to retrieve user. User not found: {}", errorMessage);
+            throw new InvalidUserException(errorMessage);
         }
     }
 }

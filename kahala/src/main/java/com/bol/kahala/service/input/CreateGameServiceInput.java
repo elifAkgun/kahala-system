@@ -2,6 +2,7 @@ package com.bol.kahala.service.input;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * A data class representing the input for creating a new game.
@@ -9,6 +10,7 @@ import lombok.Getter;
  */
 @Builder
 @Getter
+@ToString
 public class CreateGameServiceInput {
 
     /**

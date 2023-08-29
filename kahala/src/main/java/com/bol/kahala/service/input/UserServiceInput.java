@@ -3,6 +3,7 @@ package com.bol.kahala.service.input;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * A data class representing the input for retrieving user information.
@@ -11,6 +12,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @EqualsAndHashCode
+@ToString
 public class UserServiceInput {
 
     /**

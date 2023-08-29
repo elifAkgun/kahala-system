@@ -1,9 +1,6 @@
 package com.bol.kahala.model.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * This class represents a movement made by a player in a game.
@@ -12,6 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
+@ToString
 public class Movement {
 
     /**

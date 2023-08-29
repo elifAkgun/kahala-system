@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.RedisHash;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode
+@ToString
 @RedisHash("user")
 public class User {
 

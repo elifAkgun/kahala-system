@@ -14,9 +14,6 @@ import com.bol.kahala.service.input.*;
 import com.bol.kahala.service.output.*;
 import com.bol.kahala.validation.ValidationMessagesUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.bol.kahala.constant.GameConstants.*;
+import static com.bol.kahala.util.LoggingUtil.logInfo;
 import static com.bol.kahala.validation.ValidationMessages.*;
 
 /**
@@ -32,13 +30,10 @@ import static com.bol.kahala.validation.ValidationMessages.*;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class GameServiceImpl implements GameService {
 
     private final GameRepository gameRepository;
     private final UserService userService;
-    private final Logger logger = LoggerFactory.getLogger(GameServiceImpl.class);
-
     private final ValidationMessagesUtil validationMessagesUtil;
 
     private static Game createInitialGameInstance(String firstPlayerId, String secondPlayerId) {
@@ -47,6 +42,7 @@ public class GameServiceImpl implements GameService {
         // Initialize the game with the board and the current user as the first user
         Board firstPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
         Board secondPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
+       logInfo("Created game boards");
 
         Player firstPlayer = Player.builder()
                 .isCurrentTurn(true)
@@ -58,6 +54,7 @@ public class GameServiceImpl implements GameService {
                 .isCurrentTurn(false)
                 .userId(secondPlayerId)
                 .build();
+       logInfo("Created game players");
 
         Game game = Game.builder()
                 .firstPlayer(firstPlayer)
@@ -65,6 +62,8 @@ public class GameServiceImpl implements GameService {
                 .isFinished(false)
                 .activePlayerId(firstPlayer.getUserId())
                 .build();
+       logInfo("Created game");
+
         return game;
     }
 
@@ -83,6 +82,7 @@ public class GameServiceImpl implements GameService {
         Game game = createInitialGameInstance(input.getFirstPlayerId(), input.getSecondPlayerId());
 
         gameRepository.save(game);
+       logInfo("Saved game");
 
         return CreateGameServiceOutput.builder().game(game).build();
     }
@@ -111,14 +111,13 @@ public class GameServiceImpl implements GameService {
     public GameResetServiceOutput resetGame(GameResetServiceInput input) {
         // Retrieve the game based on the provided gameId
         Game game = getGame(input.getGameId());
-
         // Create an initial game instance with the same player IDs and reset attributes
         Game initialGameInstance = createInitialGameInstance(game.getFirstPlayer().getUserId(), game.getSecondPlayer().getUserId());
         initialGameInstance.setGameId(game.getGameId());
 
         // Save the initial game instance to the repository
         gameRepository.save(initialGameInstance);
-
+       logInfo("Saved game");
         // Return the reset game as output
         return GameResetServiceOutput.builder().game(initialGameInstance).build();
     }
@@ -133,6 +132,7 @@ public class GameServiceImpl implements GameService {
      */
     @Override
     public MoveGameServiceOutput moveGame(MoveGameServiceInput input) {
+
         // Retrieve the game based on the provided gameId
         Game game = getGame(input.getGameId());
 
@@ -161,39 +161,50 @@ public class GameServiceImpl implements GameService {
         // Distribute the stones in the hand to the pits based on game rules
         while (stonesInHand > 0) {
             currentPitIndex = (currentPitIndex + 1) % BOARD_TOTAL_PITS_COUNT;
-
             //currentPitIndex is not opponent player big pit's index
             if (currentPitIndex != BOARD_TOTAL_PITS_COUNT - 1) {
 
                 //currentPitIndex is player big pit's index
                 if (currentPitIndex == GameConstants.SMALL_PIT_NUMBER) {
                     currentPlayer.getBoard().increaseBigPit();
+                   logInfo("Increased player big pit. PlayerId: {}", currentPlayer.getUserId());
                 } else {
 
                     //currentPitIndex is in the player small pits
                     if (currentPitIndex < GameConstants.SMALL_PIT_NUMBER) {
                         currentPlayerSmallPits.set(currentPitIndex,
                                 currentPlayerSmallPits.get(currentPitIndex) + 1);
+                       logInfo("Increased current player's small pit. Small pit index: {} PlayerId: {}",
+                                currentPitIndex, currentPlayer.getUserId());
+
                     }
                     //currentPitIndex is in the opponent small pits
                     else {
                         int opponentPitIndex = currentPitIndex - GameConstants.SMALL_PIT_NUMBER - 1;
                         opponentPlayerSmallPits.set(opponentPitIndex,
                                 opponentPlayer.getBoard().getSmallPits().get(opponentPitIndex) + 1);
+                       logInfo("Increased opponent player's small pit. Small pit index: {} -  PlayerId: {}",
+                                opponentPitIndex, currentPlayer.getUserId());
                     }
                 }
                 stonesInHand--;
+               logInfo("Decreased stonesInHand: {} - PlayerId: {}",
+                        stonesInHand, currentPlayer.getUserId());
             }
         }
 
         // Handle capturing of stones based on game rules
         int capturedStones = handleStoneCaptures(currentPitIndex, currentPlayerSmallPits, opponentPlayerSmallPits);
-
+       logInfo("capturedStones from opponent player. capturedStones: {} - PlayerId: {}",
+                capturedStones, currentPlayer.getUserId());
         // Update the game board with the modified pit configurations
         updateGameBoard(game,
                 currentPlayerSmallPits,
                 currentPlayer.getBoard().getBigPit() + capturedStones,
                 opponentPlayerSmallPits);
+
+       logInfo("Updated board. currentPlayerSmallPits: {} - opponentPlayerSmallPits: {}  - PlayerId: {}",
+                currentPlayerSmallPits, opponentPlayerSmallPits, currentPlayer.getUserId());
 
         // Check if the game has finished
         boolean gameFinished = isGameFinished(game);
@@ -201,17 +212,24 @@ public class GameServiceImpl implements GameService {
         if (!gameFinished) {
             // Find the ID of the next active player
             activePlayerId = findActivePlayerId(game, currentPitIndex);
+           logInfo("activePlayerId : {}", activePlayerId);
         }
+       
+        logInfo("isGameFinished : {}", gameFinished);
 
         // Update the game status and save it to the repository
         updateGameStatus(game, activePlayerId, gameFinished);
         gameRepository.save(game);
+
+       logInfo("Saved game. gameId : {}", game.getGameId());
 
         // Return the updated game state as output
         return MoveGameServiceOutput.builder()
                 .game(game)
                 .build();
     }
+
+
 
     private void updateGameBoard(Game game,
                                  List<Integer> currentPlayerSmallPits,
@@ -249,17 +267,20 @@ public class GameServiceImpl implements GameService {
             throw new InvalidPlayerException(validationMessagesUtil.getExceptionMessage(
                     INVALID_PLAYER_EXCEPTION_PLAYER_NOT_FOUND_MESSAGE, input.getSecondPlayerId()));
         }
+       logInfo("Validated inputs: validateCreateGameServiceInput");
     }
 
     private Game getGame(String gameId) {
         Optional<Game> optionalGame = gameRepository.findById(gameId);
         if (optionalGame.isPresent()) {
+           logInfo("Loaded the game");
             return optionalGame.get();
         } else {
-            logger.info("Invalid gameId: {}", gameId);
+           logInfo("Invalid gameId: {}", gameId);
             throw new InvalidGameException(validationMessagesUtil.getExceptionMessage(
                     INVALID_GAME_EXCEPTION_GAME_NOT_FOUND_MESSAGE, gameId));
         }
+
     }
 
     private void validateActivePlayer(String playerId, String activePlayerId) {
@@ -267,6 +288,7 @@ public class GameServiceImpl implements GameService {
             throw new InvalidPlayerException(validationMessagesUtil.getExceptionMessage(
                     INVALID_PLAYER_EXCEPTION_NOT_ACTIVE_PLAYER_MESSAGE, playerId));
         }
+       logInfo("Validated inputs : validateActivePlayer");
     }
 
     /**
@@ -290,11 +312,20 @@ public class GameServiceImpl implements GameService {
             capturedStones = currentPlayerSmallPits.get(currentPitIndex) + opponentPlayerSmallPits.get(oppositeIndex);
             opponentPlayerSmallPits.set(oppositeIndex, 0);
             currentPlayerSmallPits.set(currentPitIndex, 0);
+
+            // Log captured stones and pit states
+           logInfo("Captured {} stones from pit {} and pit {}", capturedStones, currentPitIndex, oppositeIndex);
+           logInfo("Updated pit states after capture: Current Player: {}, Opponent Player: {}",
+                    currentPlayerSmallPits, opponentPlayerSmallPits);
         }
+
+        // Log the count of captured stones
+       logInfo("Captured {} stones in total", capturedStones);
 
         // Return the count of captured stones
         return capturedStones;
     }
+
 
     private String findActivePlayerId(Game game, int currentPitIndex) {
         Player firstPlayer = game.getFirstPlayer();
@@ -327,12 +358,18 @@ public class GameServiceImpl implements GameService {
         int firstPlayerScore = game.getFirstPlayer().getBoard().getBigPit();
         int secondPlayerScore = game.getSecondPlayer().getBoard().getBigPit();
 
+        logInfo("First player's score: {}", firstPlayerScore);
+        logInfo("Second player's score: {}", secondPlayerScore);
+
         if (firstPlayerScore > secondPlayerScore) {
             game.setWinnerPlayerId(game.getFirstPlayer().getUserId());
+            logInfo("First player wins with a higher score.");
         } else if (secondPlayerScore > firstPlayerScore) {
             game.setWinnerPlayerId(game.getSecondPlayer().getUserId());
+            logInfo("Second player wins with a higher score.");
         } else {
-            game.setWinnerPlayerId("tie"); // Indicate a tie situation
+            game.setWinnerPlayerId(TIE); // Indicate a tie situation
+            logInfo("The game ends in a tie.");
         }
     }
 
@@ -348,6 +385,9 @@ public class GameServiceImpl implements GameService {
                 .mapMultiToInt((stoneCount, consumer) -> consumer.accept(stoneCount))
                 .sum();
 
+        // Log the total stones remaining for the first player
+        logInfo("Total stones remaining for the first player: {}", totalStoneForFirstPlayer);
+
         // Add the total stones to the first player's big pit
         game.getFirstPlayer().getBoard().addBigPit(totalStoneForFirstPlayer);
 
@@ -355,6 +395,9 @@ public class GameServiceImpl implements GameService {
         int totalStoneForSecondPlayer = game.getSecondPlayer().getBoard().getSmallPits().stream()
                 .mapMultiToInt((stoneCount, consumer) -> consumer.accept(stoneCount))
                 .sum();
+
+        // Log the total stones remaining for the second player
+        logInfo("Total stones remaining for the second player: {}", totalStoneForSecondPlayer);
 
         // Add the total stones to the second player's big pit
         game.getSecondPlayer().getBoard().addBigPit(totalStoneForSecondPlayer);

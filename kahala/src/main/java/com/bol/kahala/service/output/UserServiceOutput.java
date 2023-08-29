@@ -3,6 +3,7 @@ package com.bol.kahala.service.output;
 import com.bol.kahala.model.domain.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * A data class representing the output of the user service operations.
@@ -10,6 +11,7 @@ import lombok.Getter;
  */
 @Getter
 @Builder
+@ToString
 public class UserServiceOutput {
 
     /**
