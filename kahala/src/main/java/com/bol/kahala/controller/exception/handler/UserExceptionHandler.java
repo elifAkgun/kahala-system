@@ -3,6 +3,7 @@ package com.bol.kahala.controller.exception.handler;
 import com.bol.kahala.controller.exception.model.ErrorResponse;
 import com.bol.kahala.service.exception.InvalidUserException;
 import com.bol.kahala.service.exception.UserAlreadyExistException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * objects with a bad request status.
  */
 @ControllerAdvice
+@Slf4j
 @Order(0)
 public class UserExceptionHandler {
 
@@ -27,6 +29,7 @@ public class UserExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     ErrorResponse userAlreadyExistExceptionHandler(UserAlreadyExistException ex) {
+        log.error("An error occurred:", ex);
         return new ErrorResponse(ex.getMessage());
     }
 
@@ -38,6 +41,7 @@ public class UserExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     ErrorResponse invalidUserExceptionHandler(InvalidUserException ex) {
+        log.error("An error occurred:", ex);
         return new ErrorResponse(ex.getMessage());
     }
 }

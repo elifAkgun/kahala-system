@@ -2,6 +2,7 @@ package com.bol.kahala.controller.exception.handler;
 
 import com.bol.kahala.controller.exception.model.ErrorResponse;
 import com.bol.kahala.service.exception.InvalidGameException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * It handles the InvalidGameException by returning an ErrorResponse with a bad request status.
  */
 @ControllerAdvice
+@Slf4j
 @Order(0)
 public class GameExceptionHandler {
 
@@ -26,6 +28,7 @@ public class GameExceptionHandler {
     @ResponseBody
     @Order(0)
     public ErrorResponse gameNotFoundHandler(InvalidGameException ex) {
+        log.error("An error occurred:", ex);
         return new ErrorResponse(
                 ex.getMessage());
     }

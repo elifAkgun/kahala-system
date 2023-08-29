@@ -2,6 +2,7 @@ package com.bol.kahala.controller.exception.handler;
 
 import com.bol.kahala.controller.exception.model.ErrorResponse;
 import com.bol.kahala.controller.exception.model.MethodArgumentNotValidErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -22,6 +23,7 @@ import java.util.Optional;
  */
 @ControllerAdvice
 @Order
+@Slf4j
 public class CommonExceptionHandler {
 
     // Constants for error messages
@@ -57,11 +59,9 @@ public class CommonExceptionHandler {
                 .stream()
                 .map(CommonExceptionHandler::getErrorDto)
                 .findFirst();
-        if (firstResponse.isPresent()) {
-            return firstResponse.get();
-        }
-        return new MethodArgumentNotValidErrorResponse(UNDEFINED,
-                UNDEFINED, UNDEFINED, AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER);
+
+        return firstResponse.orElseGet(() -> new MethodArgumentNotValidErrorResponse(UNDEFINED,
+                UNDEFINED, UNDEFINED, AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER));
     }
 
     /**
@@ -72,7 +72,7 @@ public class CommonExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseBody
     public ErrorResponse handleInvalidFormatExceptions(HttpMessageNotReadableException ex) {
-        ex.printStackTrace();
+        log.error("An error occurred:", ex);
         return new ErrorResponse(INVALID_JSON_BODY);
     }
 
@@ -84,7 +84,7 @@ public class CommonExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     @ResponseBody
     public ErrorResponse handleValidationExceptions(RuntimeException ex) {
-        ex.printStackTrace();
+        log.error("An error occurred:", ex);
         return new ErrorResponse(AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER);
     }
 }
