@@ -41,7 +41,6 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
      *
      * @param userId The unique identifier of the user to retrieve.
      * @return The retrieved user.
-     * @throws UserNotFoundException If the user with the specified ID is not found.
      */
     @Override
     public Optional<User> findById(String userId) {
@@ -49,51 +48,6 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
             return Optional.empty();
         }
         return Optional.of(userMap.get(userId));
-    }
-
-    @Override
-    public boolean existsById(String s) {
-        return false;
-    }
-
-    @Override
-    public Iterable<User> findAll() {
-        return null;
-    }
-
-    @Override
-    public Iterable<User> findAllById(Iterable<String> strings) {
-        return null;
-    }
-
-    @Override
-    public long count() {
-        return 0;
-    }
-
-    @Override
-    public void deleteById(String s) {
-
-    }
-
-    @Override
-    public void delete(User entity) {
-
-    }
-
-    @Override
-    public void deleteAllById(Iterable<? extends String> strings) {
-
-    }
-
-    @Override
-    public void deleteAll(Iterable<? extends User> entities) {
-
-    }
-
-    @Override
-    public void deleteAll() {
-
     }
 
 
@@ -105,4 +59,55 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     public Map<String, User> getUsers() {
         return userMap;
     }
+
+    @Override
+    public boolean existsById(String s) {
+        return userMap.containsKey(s);
+    }
+
+    @Override
+    public Iterable<User> findAll() {
+        return userMap.values();
+    }
+
+    @Override
+    public Iterable<User> findAllById(Iterable<String> strings) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public long count() {
+        return userMap.size();
+    }
+
+    @Override
+    public void deleteById(String s) {
+        userMap.remove(s);
+    }
+
+    @Override
+    public void delete(User entity) {
+        userMap.remove(entity.getUserId());
+    }
+
+    @Override
+    public void deleteAllById(Iterable<? extends String> strings) {
+        for (String s : strings) {
+            deleteById(s);
+        }
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends User> entities) {
+        for (User user : entities) {
+            delete(user);
+        }
+    }
+
+    @Override
+    public void deleteAll() {
+        userMap.clear();
+    }
+
+
 }

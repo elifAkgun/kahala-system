@@ -4,10 +4,7 @@ import com.bol.kahala.model.domain.Game;
 import com.bol.kahala.repository.GameRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class implements the GameRepository interface and provides an in-memory storage for game data.
@@ -35,7 +32,7 @@ public class GameRepositoryInMemoryImpl implements GameRepository {
 
     @Override
     public <S extends Game> Iterable<S> saveAll(Iterable<S> entities) {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     /**
@@ -43,7 +40,6 @@ public class GameRepositoryInMemoryImpl implements GameRepository {
      *
      * @param gameId The unique identifier of the game to retrieve.
      * @return The retrieved game.
-     * @throws GameNotFoundException If the game with the specified ID is not found.
      */
     @Override
     public Optional<Game> findById(String gameId) {
@@ -55,7 +51,7 @@ public class GameRepositoryInMemoryImpl implements GameRepository {
 
     @Override
     public boolean existsById(String s) {
-        return false;
+        return activeGames.containsKey(s);
     }
 
     /**
@@ -69,7 +65,7 @@ public class GameRepositoryInMemoryImpl implements GameRepository {
 
     @Override
     public Iterable<Game> findAllById(Iterable<String> strings) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -79,26 +75,30 @@ public class GameRepositoryInMemoryImpl implements GameRepository {
 
     @Override
     public void deleteById(String s) {
-
+        activeGames.remove(s);
     }
 
     @Override
     public void delete(Game entity) {
-
+        activeGames.remove(entity.getGameId());
     }
 
     @Override
     public void deleteAllById(Iterable<? extends String> strings) {
-
+        for (String id : strings) {
+            deleteById(id);
+        }
     }
 
     @Override
     public void deleteAll(Iterable<? extends Game> entities) {
-
+        for (Game game : entities) {
+            delete(game);
+        }
     }
 
     @Override
     public void deleteAll() {
-
+        activeGames.clear();
     }
 }
