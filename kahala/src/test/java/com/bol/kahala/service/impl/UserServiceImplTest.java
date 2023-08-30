@@ -1,6 +1,6 @@
 package com.bol.kahala.service.impl;
 
-import com.bol.kahala.model.domain.User;
+import com.bol.kahala.model.User;
 import com.bol.kahala.repository.UserRepository;
 import com.bol.kahala.service.exception.DuplicateUserNameException;
 import com.bol.kahala.service.exception.InvalidUserException;

@@ -1,6 +1,6 @@
 package com.bol.kahala.repository.impl;
 
-import com.bol.kahala.model.domain.User;
+import com.bol.kahala.model.User;
 import com.bol.kahala.repository.UserRepository;
 import org.springframework.stereotype.Repository;
 

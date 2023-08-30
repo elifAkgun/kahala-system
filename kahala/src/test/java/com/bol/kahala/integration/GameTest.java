@@ -1,7 +1,7 @@
 package com.bol.kahala.integration;
 
-import com.bol.kahala.model.domain.Movement;
-import com.bol.kahala.model.domain.User;
+import com.bol.kahala.model.Movement;
+import com.bol.kahala.model.User;
 import com.bol.kahala.repository.GameRepository;
 import com.bol.kahala.repository.UserRepository;
 import com.bol.kahala.service.GameService;

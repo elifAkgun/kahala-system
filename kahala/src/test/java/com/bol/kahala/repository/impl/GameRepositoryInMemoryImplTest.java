@@ -1,6 +1,6 @@
 package com.bol.kahala.repository.impl;
 
-import com.bol.kahala.model.domain.Game;
+import com.bol.kahala.model.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

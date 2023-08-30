@@ -1,4 +1,4 @@
-package com.bol.kahala.model.domain;
+package com.bol.kahala.model;
 
 import lombok.*;
 

@@ -2,7 +2,7 @@ package com.bol.kahala.controller;
 
 import com.bol.kahala.controller.request.UserRequest;
 import com.bol.kahala.helper.ErrorMessages;
-import com.bol.kahala.model.domain.User;
+import com.bol.kahala.model.User;
 import com.bol.kahala.service.UserService;
 import com.bol.kahala.service.exception.UserAlreadyExistException;
 import com.bol.kahala.service.input.CreateUserServiceInput;

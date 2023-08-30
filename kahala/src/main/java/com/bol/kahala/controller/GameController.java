@@ -3,7 +3,7 @@ package com.bol.kahala.controller;
 import com.bol.kahala.controller.request.GameRequest;
 import com.bol.kahala.controller.request.MoveGameRequest;
 import com.bol.kahala.controller.response.GameResponse;
-import com.bol.kahala.model.domain.Movement;
+import com.bol.kahala.model.Movement;
 import com.bol.kahala.service.GameService;
 import com.bol.kahala.service.input.CreateGameServiceInput;
 import com.bol.kahala.service.input.GameResetServiceInput;

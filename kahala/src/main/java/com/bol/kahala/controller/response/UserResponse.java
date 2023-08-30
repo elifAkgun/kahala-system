@@ -1,6 +1,6 @@
 package com.bol.kahala.controller.response;
 
-import com.bol.kahala.model.domain.User;
+import com.bol.kahala.model.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,8 +1,8 @@
 package com.bol.kahala.helper;
 
-import com.bol.kahala.model.domain.Board;
-import com.bol.kahala.model.domain.Game;
-import com.bol.kahala.model.domain.Player;
+import com.bol.kahala.model.Board;
+import com.bol.kahala.model.Game;
+import com.bol.kahala.model.Player;
 
 import java.util.List;
 

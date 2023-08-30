@@ -1,10 +1,10 @@
 package com.bol.kahala.service.impl;
 
 import com.bol.kahala.constant.GameConstants;
-import com.bol.kahala.model.domain.Board;
-import com.bol.kahala.model.domain.Game;
-import com.bol.kahala.model.domain.Player;
-import com.bol.kahala.model.domain.User;
+import com.bol.kahala.model.Board;
+import com.bol.kahala.model.Game;
+import com.bol.kahala.model.Player;
+import com.bol.kahala.model.User;
 import com.bol.kahala.repository.GameRepository;
 import com.bol.kahala.service.GameService;
 import com.bol.kahala.service.UserService;

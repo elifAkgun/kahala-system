@@ -1,4 +1,4 @@
-package com.bol.kahala.model.domain;
+package com.bol.kahala.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;

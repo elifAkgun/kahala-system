@@ -1,6 +1,6 @@
 package com.bol.kahala.service.output;
 
-import com.bol.kahala.model.domain.Game;
+import com.bol.kahala.model.Game;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

@@ -2,7 +2,7 @@ package com.bol.kahala.controller;
 
 import com.bol.kahala.controller.request.UserRequest;
 import com.bol.kahala.controller.response.UserResponse;
-import com.bol.kahala.model.domain.User;
+import com.bol.kahala.model.User;
 import com.bol.kahala.service.UserService;
 import com.bol.kahala.service.input.CreateUserServiceInput;
 import com.bol.kahala.service.input.UserServiceInput;

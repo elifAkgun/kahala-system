@@ -2,7 +2,7 @@ package com.bol.kahala.controller;
 
 import com.bol.kahala.controller.request.GameRequest;
 import com.bol.kahala.controller.request.MoveGameRequest;
-import com.bol.kahala.model.domain.Game;
+import com.bol.kahala.model.Game;
 import com.bol.kahala.service.GameService;
 import com.bol.kahala.service.exception.InvalidGameException;
 import com.bol.kahala.service.exception.InvalidPlayerException;

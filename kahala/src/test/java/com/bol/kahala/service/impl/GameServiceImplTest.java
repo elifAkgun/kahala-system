@@ -1,5 +1,6 @@
 package com.bol.kahala.service.impl;
 
+import com.bol.kahala.model.*;
 import com.bol.kahala.model.domain.*;
 import com.bol.kahala.repository.GameRepository;
 import com.bol.kahala.service.UserService;
