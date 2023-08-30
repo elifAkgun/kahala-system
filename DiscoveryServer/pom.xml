@@ -8,7 +8,7 @@
         <version>3.1.2</version>
         <relativePath/>
     </parent>
-    <groupId>code.elif</groupId>
+    <groupId>com.bol</groupId>
     <artifactId>discoveryServer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>DiscoveryServer</name>

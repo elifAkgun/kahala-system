@@ -1,4 +1,4 @@
-package code.elif.kahala.discovery;
+package com.bol.kahala.discovery;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

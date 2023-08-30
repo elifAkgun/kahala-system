@@ -1,4 +1,4 @@
-package code.elif.kahala.discovery;
+package com.bol.kahala.discovery;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
