@@ -1,5 +1,6 @@
 package com.bol.kahala.service.impl;
 
+import com.bol.kahala.dto.UserDto;
 import com.bol.kahala.model.User;
 import com.bol.kahala.repository.UserRepository;
 import com.bol.kahala.service.exception.DuplicateUserNameException;
@@ -96,7 +97,7 @@ class UserServiceImplTest {
 
         // Checking the output
         assertNotNull(output);
-        assertEquals(newUser, output.getUser());
+        assertEquals(UserDto.toDto(newUser), output.getUser());
 
         // Verifying correct method invocations
         verify(userRepository, times(1)).findAll();

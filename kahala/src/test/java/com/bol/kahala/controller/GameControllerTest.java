@@ -1,8 +1,8 @@
 package com.bol.kahala.controller;
 
-import com.bol.kahala.controller.request.GameRequest;
+import com.bol.kahala.controller.request.CreateGameRequest;
 import com.bol.kahala.controller.request.MoveGameRequest;
-import com.bol.kahala.model.Game;
+import com.bol.kahala.dto.GameDto;
 import com.bol.kahala.service.GameService;
 import com.bol.kahala.service.exception.InvalidGameException;
 import com.bol.kahala.service.exception.InvalidPlayerException;
@@ -49,12 +49,12 @@ class GameControllerTest {
     @Test
     void givenGameRequestHasNoValue_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
-        GameRequest gameRequest = GameRequest.builder().build();
+        CreateGameRequest createGameRequest = CreateGameRequest.builder().build();
 
         // when - action or the behaviour that we are going test
         ResultActions response = mockMvc.perform(post("/games")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(gameRequest)));
+                .content(objectMapper.writeValueAsString(createGameRequest)));
 
         // then - verify the output
         response.andDo(MockMvcResultHandlers.print())
@@ -65,13 +65,13 @@ class GameControllerTest {
     @Test
     void givenGameRequestHasNoSecondPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
-        GameRequest gameRequest = GameRequest.builder()
+        CreateGameRequest createGameRequest = CreateGameRequest.builder()
                 .firstPlayerId("1234").build();
 
         // when - action or the behaviour that we are going test
         ResultActions response = mockMvc.perform(post("/games")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(gameRequest)));
+                .content(objectMapper.writeValueAsString(createGameRequest)));
 
         // then - verify the output
         response.andDo(MockMvcResultHandlers.print())
@@ -83,13 +83,13 @@ class GameControllerTest {
     @Test
     void givenGameRequestHasNoFirstPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
-        GameRequest gameRequest = GameRequest.builder()
+        CreateGameRequest createGameRequest = CreateGameRequest.builder()
                 .secondPlayerId("1234").build();
 
         // when - action or the behaviour that we are going test
         ResultActions response = mockMvc.perform(post("/games")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(gameRequest)));
+                .content(objectMapper.writeValueAsString(createGameRequest)));
 
         // then - verify the output
         response.andDo(MockMvcResultHandlers.print())
@@ -100,14 +100,14 @@ class GameControllerTest {
     @Test
     void givenGameRequestHasEmptyFirstPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
-        GameRequest gameRequest = GameRequest.builder()
+        CreateGameRequest createGameRequest = CreateGameRequest.builder()
                 .firstPlayerId("")
                 .secondPlayerId("1234").build();
 
         // when - action or the behaviour that we are going test
         ResultActions response = mockMvc.perform(post("/games")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(gameRequest)));
+                .content(objectMapper.writeValueAsString(createGameRequest)));
 
         // then - verify the output
         response.andDo(MockMvcResultHandlers.print())
@@ -118,13 +118,13 @@ class GameControllerTest {
     @Test
     void givenGameRequestHasEmptySecondPlayerId_whenCreateGameCalled_thenReturnErrorResponse() throws Exception {
         // given- precondition or setup
-        GameRequest gameRequest = GameRequest.builder()
+        CreateGameRequest createGameRequest = CreateGameRequest.builder()
                 .firstPlayerId("").build();
 
         // when - action or the behaviour that we are going test
         ResultActions response = mockMvc.perform(post("/games")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(gameRequest)));
+                .content(objectMapper.writeValueAsString(createGameRequest)));
 
         // then - verify the output
         response.andDo(MockMvcResultHandlers.print())
@@ -135,12 +135,12 @@ class GameControllerTest {
     @Test
     void givenValidGameRequest_whenCreateGameCalled_thenReturnGameResponse() throws Exception {
         // given- precondition or setup
-        GameRequest gameRequest = GameRequest.builder()
+        CreateGameRequest createGameRequest = CreateGameRequest.builder()
                 .firstPlayerId(FIRST_PLAYER_USER_ID)
                 .secondPlayerId(SECOND_PLAYER_USER_ID).build();
 
         CreateGameServiceOutput createGameServiceOutput = CreateGameServiceOutput.builder()
-                .game(GAME).build();
+                .game(GameDto.toDto(GAME)).build();
 
         given(gameService.createGame(any(CreateGameServiceInput.class)))
                 .willReturn(createGameServiceOutput);
@@ -148,7 +148,7 @@ class GameControllerTest {
         // when - action or the behaviour that we are going test
         ResultActions response = mockMvc.perform(post("/games")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(gameRequest)));
+                .content(objectMapper.writeValueAsString(createGameRequest)));
 
         // then - verify the output
         response.andDo(MockMvcResultHandlers.print())
@@ -190,7 +190,7 @@ class GameControllerTest {
         MoveGameRequest moveGameRequest = MoveGameRequest.builder().playerId(null).pitNumber(4).build();
 
         // when - action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
+        ResultActions response = mockMvc.perform(put("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(moveGameRequest)));
 
@@ -209,7 +209,7 @@ class GameControllerTest {
                 .build();
 
         // when - action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
+        ResultActions response = mockMvc.perform(put("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(moveGameRequest)));
 
@@ -229,7 +229,7 @@ class GameControllerTest {
                 .build();
         // when - action or the behaviour that we are going test
 
-        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
+        ResultActions response = mockMvc.perform(put("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(moveGameRequest)));
 
@@ -248,7 +248,7 @@ class GameControllerTest {
                 .build();
         // when - action or the behaviour that we are going test
 
-        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
+        ResultActions response = mockMvc.perform(put("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(moveGameRequest)));
 
@@ -266,7 +266,7 @@ class GameControllerTest {
                 .willThrow(new InvalidGameException(MOCK_MESSAGE));
 
         // when - action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
+        ResultActions response = mockMvc.perform(put("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(MoveGameRequest.builder().playerId("123")
                         .pitNumber(4).build())));
@@ -284,7 +284,7 @@ class GameControllerTest {
                 .willThrow(new InvalidPlayerException(MOCK_MESSAGE));
 
         // when - action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
+        ResultActions response = mockMvc.perform(put("/games/move/{gameId}", GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(MoveGameRequest.builder().playerId("123")
                         .pitNumber(4).build())));
@@ -302,7 +302,7 @@ class GameControllerTest {
                 .willThrow(new NullPointerException(MOCK_MESSAGE));
 
         // when - action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/games/move/" + GAME_ID)
+        ResultActions response = mockMvc.perform(put("/games/move/" + GAME_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(
                         MoveGameRequest.builder().playerId("123")
@@ -318,13 +318,14 @@ class GameControllerTest {
     @Test
     void givenValidMoveGameRequest_whenMoveGameCalled_thenReturnGameResponse() throws Exception {
         // given- precondition or setup
-        Game game = Game.builder().gameId(GAME_ID).build();
+        GameDto gameDto = GameDto.builder().gameId(GAME_ID).build();
         given(gameService.moveGame(any(MoveGameServiceInput.class)))
-                .willReturn(MoveGameServiceOutput.builder().game(game).build());
+                .willReturn(MoveGameServiceOutput.builder()
+                        .game(gameDto).build());
 
 
         // when - action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/games/move/" + GAME)
+        ResultActions response = mockMvc.perform(put("/games/move/" + GAME)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(
                         MoveGameRequest.builder().playerId("123")
@@ -340,7 +341,7 @@ class GameControllerTest {
     @Test
     void givenValidGameId_whenGetGameCalled_thenReturnGameResponse() throws Exception {
         // Given
-        Game game = Game.builder().gameId("game123").build();
+        GameDto game = GameDto.builder().gameId("game123").build();
         given(gameService.getGame(any(GameStatusServiceInput.class)))
                 .willReturn(GameStatusServiceOutput.builder().game(game).build());
 
@@ -376,13 +377,13 @@ class GameControllerTest {
     void givenValidGameId_whenResetGameCalled_thenReturnOkResponse() throws Exception {
         // Given
         String gameId = "validGame";
-        GameResetServiceOutput resetOutput = GameResetServiceOutput.builder().game(new Game()).build();
+        GameResetServiceOutput resetOutput = GameResetServiceOutput.builder().game(GameDto.builder().build()).build();
 
         // Mock the gameService to return the reset game output
         given(gameService.resetGame(any(GameResetServiceInput.class))).willReturn(resetOutput);
 
         // When and Then
-        mockMvc.perform(put("/games/" + gameId)
+        mockMvc.perform(delete("/games/" + gameId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.game").exists());
@@ -398,7 +399,7 @@ class GameControllerTest {
                 .willThrow(new InvalidPlayerException("Invalid game ID"));
 
         // When and Then
-        mockMvc.perform(put("/games/" + invalidGameId)
+        mockMvc.perform(delete("/games/" + invalidGameId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }

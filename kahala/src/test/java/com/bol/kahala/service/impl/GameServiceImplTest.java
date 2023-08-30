@@ -1,7 +1,11 @@
 package com.bol.kahala.service.impl;
 
-import com.bol.kahala.model.*;
-import com.bol.kahala.model.domain.*;
+import com.bol.kahala.dto.GameDto;
+import com.bol.kahala.dto.MovementDto;
+import com.bol.kahala.dto.UserDto;
+import com.bol.kahala.model.Board;
+import com.bol.kahala.model.Game;
+import com.bol.kahala.model.Player;
 import com.bol.kahala.repository.GameRepository;
 import com.bol.kahala.service.UserService;
 import com.bol.kahala.service.exception.InvalidGameException;
@@ -50,11 +54,11 @@ class GameServiceImplTest {
 
         given(userService.getUser(UserServiceInput.builder().userId(FIRST_PLAYER_USER_ID).build()))
                 .willReturn(UserServiceOutput.builder()
-                        .user(User.builder().userId(FIRST_PLAYER_USER_ID).build()).build());
+                        .user(UserDto.builder().userId(FIRST_PLAYER_USER_ID).build()).build());
 
         given(userService.getUser(UserServiceInput.builder().userId(SECOND_PLAYER_USER_ID).build()))
                 .willReturn(UserServiceOutput.builder()
-                        .user(User.builder().userId(SECOND_PLAYER_USER_ID).build()).build());
+                        .user(UserDto.builder().userId(SECOND_PLAYER_USER_ID).build()).build());
 
         // when - action or the behaviour that we are going test
         gameService.createGame(CreateGameServiceInput.builder()
@@ -96,16 +100,16 @@ class GameServiceImplTest {
 
         given(userService.getUser(UserServiceInput.builder().userId(FIRST_PLAYER_USER_ID).build()))
                 .willReturn(UserServiceOutput.builder()
-                        .user(User.builder().userId(FIRST_PLAYER_USER_ID).build()).build());
+                        .user(UserDto.builder().userId(FIRST_PLAYER_USER_ID).build()).build());
 
         given(userService.getUser(UserServiceInput.builder().userId(SECOND_PLAYER_USER_ID).build()))
                 .willReturn(UserServiceOutput.builder()
-                        .user(User.builder().userId(SECOND_PLAYER_USER_ID).build()).build());
+                        .user(UserDto.builder().userId(SECOND_PLAYER_USER_ID).build()).build());
 
 
         // when - action or the behaviour that we are going test
         CreateGameServiceOutput createGameServiceOutput = gameService.createGame(gameDto);
-        Game game = createGameServiceOutput.getGame();
+        GameDto game = createGameServiceOutput.getGame();
         List<Integer> expectedInitialSmallPits = new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT));
 
 
@@ -155,14 +159,14 @@ class GameServiceImplTest {
         given(gameRepository.findById(gameId)).willReturn(Optional.of(game));
 
         // when - action or the behaviour that we are going test
-        Movement movement = new Movement(FIRST_PLAYER_USER_ID, 3);
+        MovementDto movementDto = new MovementDto(FIRST_PLAYER_USER_ID, 3);
         MoveGameServiceOutput gameServiceOutput =
                 gameService.moveGame(MoveGameServiceInput.builder()
                         .gameId(gameId)
-                        .movement(movement)
+                        .movementDto(movementDto)
                         .build());
 
-        Game actualGame = gameServiceOutput.getGame();
+        GameDto actualGame = gameServiceOutput.getGame();
 
         // then - verify the output
         List<Integer> expectedSmallPitsFirstPlayer = List.of(6, 6, 0, 7, 7, 7);
@@ -207,14 +211,14 @@ class GameServiceImplTest {
         given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(game));
 
         // when - action or the behaviour that we are going test
-        Movement movement = new Movement(FIRST_PLAYER_USER_ID, 6);
+        MovementDto movementDto = new MovementDto(FIRST_PLAYER_USER_ID, 6);
         MoveGameServiceOutput gameServiceOutput =
                 gameService.moveGame(MoveGameServiceInput.builder()
                         .gameId(GAME_ID)
-                        .movement(movement)
+                        .movementDto(movementDto)
                         .build());
 
-        Game actualGame = gameServiceOutput.getGame();
+        GameDto actualGame = gameServiceOutput.getGame();
 
         // then - verify the output
         List<Integer> expectedSmallPitsFirstPlayer = List.of(6, 6, 6, 6, 6, 0);
@@ -258,8 +262,8 @@ class GameServiceImplTest {
 
         given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(game));
 
-        // Define the movement to capture stones from the 1st pit
-        Movement movement = new Movement(FIRST_PLAYER_USER_ID, 1);
+        // Define the movementDto to capture stones from the 1st pit
+        MovementDto movementDto = new MovementDto(FIRST_PLAYER_USER_ID, 1);
         //After capturing scenario
         List<Integer> expectedFirstUserSmallPits = List.of(0, 0, 2, 0, 8, 7);
         List<Integer> expectedSecondUserSmallPits = List.of(1, 0, 3, 7, 0, 6);
@@ -269,10 +273,10 @@ class GameServiceImplTest {
         MoveGameServiceOutput gameServiceOutput =
                 gameService.moveGame(MoveGameServiceInput.builder()
                         .gameId(GAME_ID)
-                        .movement(movement)
+                        .movementDto(movementDto)
                         .build());
 
-        Game actualGame = gameServiceOutput.getGame();
+        GameDto actualGame = gameServiceOutput.getGame();
         // Then
         assertEquals(expectedFirstUserSmallPits, actualGame.getFirstPlayer().getBoard().getSmallPits());
         assertEquals(expectedFirstUserBigPit, actualGame.getFirstPlayer().getBoard().getBigPit());
@@ -314,8 +318,8 @@ class GameServiceImplTest {
 
         given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(game));
 
-        // Define the movement to capture stones from the 3rd pit
-        Movement movement = new Movement(FIRST_PLAYER_USER_ID, 3);
+        // Define the movementDto to capture stones from the 3rd pit
+        MovementDto movementDto = new MovementDto(FIRST_PLAYER_USER_ID, 3);
         //After capturing scenario
         List<Integer> expectedFirstUserSmallPits = List.of(4, 4, 0, 5, 5, 5);
         List<Integer> expectedSecondUserSmallPits = List.of(4, 4, 4, 4, 4, 4);
@@ -325,10 +329,10 @@ class GameServiceImplTest {
         MoveGameServiceOutput gameServiceOutput =
                 gameService.moveGame(MoveGameServiceInput.builder()
                         .gameId(gameId)
-                        .movement(movement)
+                        .movementDto(movementDto)
                         .build());
 
-        Game actualGame = gameServiceOutput.getGame();
+        GameDto actualGame = gameServiceOutput.getGame();
 
         // Then
         assertEquals(expectedFirstUserSmallPits, actualGame.getFirstPlayer().getBoard().getSmallPits());
@@ -374,8 +378,8 @@ class GameServiceImplTest {
         given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(game));
 
 
-        // Define the movement to capture stones from the 3rd pit
-        Movement movement = new Movement(SECOND_PLAYER_USER_ID, 1);
+        // Define the movementDto to capture stones from the 3rd pit
+        MovementDto movementDto = new MovementDto(SECOND_PLAYER_USER_ID, 1);
         //After capturing scenario
         List<Integer> expectedFirstUserSmallPits = List.of(0, 1, 0, 0, 0, 1);
         List<Integer> expectedSecondUserSmallPits = List.of(0, 0, 0, 0, 0, 0);
@@ -388,10 +392,10 @@ class GameServiceImplTest {
         MoveGameServiceOutput gameServiceOutput =
                 gameService.moveGame(MoveGameServiceInput.builder()
                         .gameId(gameId)
-                        .movement(movement)
+                        .movementDto(movementDto)
                         .build());
 
-        Game actualGame = gameServiceOutput.getGame();
+        GameDto actualGame = gameServiceOutput.getGame();
         // Then
         assertEquals(expectedFirstUserSmallPits, actualGame.getFirstPlayer().getBoard().getSmallPits());
         assertEquals(expectedFirstUserBigPit, actualGame.getFirstPlayer().getBoard().getBigPit());
@@ -429,7 +433,7 @@ class GameServiceImplTest {
         assertThat(resetOutput.getGame().getSecondPlayer().getBoard().getBigPit()).isZero();
 
         // Verify that the game is saved after resetting
-        verify(gameRepository).save(resetOutput.getGame());
+        verify(gameRepository).save(any(Game.class));
     }
 
 
@@ -452,7 +456,7 @@ class GameServiceImplTest {
         // Given
         String gameId = GAME_ID;
         GameStatusServiceInput gameStatusInput = GameStatusServiceInput.builder().gameId(gameId).build();
-        Game mockGame = new Game(); // Create a mock game
+        Game mockGame = Game.builder().build(); // Create a mock game
 
         // Mock the repository to return the mock game
         given(gameRepository.findById(GAME_ID)).willReturn(Optional.of(mockGame));
@@ -461,7 +465,7 @@ class GameServiceImplTest {
         GameStatusServiceOutput gameStatusOutput = gameService.getGame(gameStatusInput);
 
         // Then
-        assertThat(gameStatusOutput.getGame()).isEqualTo(mockGame);
+        assertThat(gameStatusOutput.getGame()).isEqualTo(GameDto.toDto(mockGame));
     }
 
     @Test

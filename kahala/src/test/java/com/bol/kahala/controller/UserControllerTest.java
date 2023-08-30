@@ -1,8 +1,8 @@
 package com.bol.kahala.controller;
 
 import com.bol.kahala.controller.request.UserRequest;
+import com.bol.kahala.dto.UserDto;
 import com.bol.kahala.helper.ErrorMessages;
-import com.bol.kahala.model.User;
 import com.bol.kahala.service.UserService;
 import com.bol.kahala.service.exception.UserAlreadyExistException;
 import com.bol.kahala.service.input.CreateUserServiceInput;
@@ -127,7 +127,7 @@ class UserControllerTest {
 
         CreateUserServiceOutput createUserServiceOutput = CreateUserServiceOutput
                 .builder().user(
-                        User.builder().userName(USER_NAME)
+                        UserDto.builder().userName(USER_NAME)
                                 .password(PASSWORD).userId(USER_ID).build()).build();
         given(userService.createUser(any(CreateUserServiceInput.class)))
                 .willReturn(createUserServiceOutput);
@@ -149,7 +149,7 @@ class UserControllerTest {
 
         CreateUserServiceOutput createUserServiceOutput = CreateUserServiceOutput
                 .builder().user(
-                        User.builder().userName(USER_NAME)
+                        UserDto.builder().userName(USER_NAME)
                                 .password(PASSWORD).userId(USER_ID).build()).build();
 
         given(userService.createUser(any(CreateUserServiceInput.class)))
@@ -181,7 +181,7 @@ class UserControllerTest {
 
         CreateUserServiceOutput createUserServiceOutput = CreateUserServiceOutput
                 .builder().user(
-                        User.builder().userName(USER_NAME)
+                        UserDto.builder().userName(USER_NAME)
                                 .password(PASSWORD).userId(USER_ID).build()).build();
 
         given(userService.createUser(any(CreateUserServiceInput.class)))
@@ -223,7 +223,7 @@ class UserControllerTest {
     @Test
     void givenValidUserId_whenGetUserCalled_thenReturnUserResponse() throws Exception {
         // Configure the necessary behaviors using mock objects.
-        User user = User.builder().userId(USER_ID).userName(USER_NAME).build();
+        UserDto user = UserDto.builder().userId(USER_ID).userName(USER_NAME).build();
         given(userService.getUser(any(UserServiceInput.class)))
                 .willReturn(UserServiceOutput.builder().user(user).build());
 

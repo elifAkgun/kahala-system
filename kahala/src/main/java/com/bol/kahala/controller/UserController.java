@@ -2,6 +2,7 @@ package com.bol.kahala.controller;
 
 import com.bol.kahala.controller.request.UserRequest;
 import com.bol.kahala.controller.response.UserResponse;
+import com.bol.kahala.dto.UserDto;
 import com.bol.kahala.model.User;
 import com.bol.kahala.service.UserService;
 import com.bol.kahala.service.input.CreateUserServiceInput;
@@ -54,7 +55,7 @@ public class UserController {
                                                 @NotEmpty(message = "{NotEmpty.userRequest.user.userId}") String userId) {
         UserServiceOutput userServiceOutput = userService.getUser(UserServiceInput.builder()
                 .userId(userId).build());
-        User user = userServiceOutput.getUser();
+        UserDto user = userServiceOutput.getUser();
         return user != null ? ResponseEntity.ok(UserResponse.builder().user(user).build())
                 : ResponseEntity.notFound().build();
     }

@@ -1,19 +1,16 @@
 package com.bol.kahala.model;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 /**
  * This class represents a game instance with its associated players and state.
  */
-@Getter
-@Setter
-@AllArgsConstructor
+
 @Builder
-@NoArgsConstructor
-@EqualsAndHashCode
-@ToString
+@Data
 @RedisHash("game")
 public class Game {
 

@@ -4,7 +4,10 @@ import com.bol.kahala.model.Game;
 import com.bol.kahala.repository.GameRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * This class implements the GameRepository interface and provides an in-memory storage for game data.

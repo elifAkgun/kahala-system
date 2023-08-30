@@ -1,6 +1,6 @@
 package com.bol.kahala.service.output;
 
-import com.bol.kahala.model.User;
+import com.bol.kahala.dto.UserDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -17,5 +17,5 @@ public class UserServiceOutput {
     /**
      * The user object containing user-related information.
      */
-    private User user;
+    private UserDto user;
 }

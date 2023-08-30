@@ -1,9 +1,9 @@
 package com.bol.kahala.controller;
 
-import com.bol.kahala.controller.request.GameRequest;
+import com.bol.kahala.controller.request.CreateGameRequest;
 import com.bol.kahala.controller.request.MoveGameRequest;
 import com.bol.kahala.controller.response.GameResponse;
-import com.bol.kahala.model.Movement;
+import com.bol.kahala.dto.MovementDto;
 import com.bol.kahala.service.GameService;
 import com.bol.kahala.service.input.CreateGameServiceInput;
 import com.bol.kahala.service.input.GameResetServiceInput;
@@ -35,14 +35,14 @@ public class GameController {
     /**
      * Creates a new game using the provided player IDs.
      *
-     * @param gameRequest The request containing player IDs.
+     * @param createGameRequest The request containing player IDs.
      * @return A ResponseEntity containing the created game response.
      */
     @PostMapping
-    public ResponseEntity<GameResponse> createGame(@RequestBody @Valid GameRequest gameRequest) {
+    public ResponseEntity<GameResponse> createGame(@RequestBody @Valid CreateGameRequest createGameRequest) {
         CreateGameServiceOutput createdGame = gameService.createGame(CreateGameServiceInput.builder()
-                .firstPlayerId(gameRequest.getFirstPlayerId())
-                .secondPlayerId(gameRequest.getSecondPlayerId()).build());
+                .firstPlayerId(createGameRequest.getFirstPlayerId())
+                .secondPlayerId(createGameRequest.getSecondPlayerId()).build());
         return createdGame != null ?
                 ResponseEntity
                         .status(HttpStatus.CREATED)
@@ -58,12 +58,12 @@ public class GameController {
      * @param moveGameRequest The request containing move details.
      * @return A ResponseEntity containing the updated game response.
      */
-    @PostMapping("/move/{gameId}")
+    @PutMapping("/move/{gameId}")
     public ResponseEntity<GameResponse> moveGame(@PathVariable("gameId") @Valid @NotNull String gameId,
                                                  @RequestBody @Valid MoveGameRequest moveGameRequest) {
         MoveGameServiceOutput movedGame = gameService.moveGame(MoveGameServiceInput.builder()
                 .gameId(gameId)
-                .movement(Movement.builder()
+                .movementDto(MovementDto.builder()
                         .playerId(moveGameRequest.getPlayerId())
                         .position(moveGameRequest.getPitNumber())
                         .build())
@@ -96,7 +96,7 @@ public class GameController {
      * @param gameId The ID of the game to be reset.
      * @return A ResponseEntity containing the reset game response.
      */
-    @PutMapping("/{gameId}")
+    @DeleteMapping("/{gameId}")
     public ResponseEntity<GameResponse> resetGame(@Valid @PathVariable String gameId) {
         GameResetServiceOutput gameResetServiceOutput = gameService.resetGame(GameResetServiceInput.builder()
                 .gameId(gameId).build());

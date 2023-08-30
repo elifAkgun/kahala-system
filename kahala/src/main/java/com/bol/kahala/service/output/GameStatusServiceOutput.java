@@ -1,6 +1,6 @@
 package com.bol.kahala.service.output;
 
-import com.bol.kahala.model.Game;
+import com.bol.kahala.dto.GameDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -17,6 +17,6 @@ public class GameStatusServiceOutput {
     /**
      * The game instance representing the current status of the game.
      */
-    private Game game;
+    private GameDto game;
 }
 

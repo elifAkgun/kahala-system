@@ -1,9 +1,12 @@
 package com.bol.kahala.constant;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * This utility class provides constants related to the game settings.
  * It prevents instantiation by throwing an exception in its private constructor.
  */
+@UtilityClass
 public class GameConstants {
 
     /**
@@ -23,11 +26,4 @@ public class GameConstants {
      */
     public static final String TIE = "TIE";
 
-    /**
-     * Private constructor to prevent instantiation of this utility class.
-     * This constructor throws an IllegalStateException to indicate that instances of this class cannot be created.
-     */
-    private GameConstants() {
-        throw new IllegalStateException("Utility class");
-    }
 }

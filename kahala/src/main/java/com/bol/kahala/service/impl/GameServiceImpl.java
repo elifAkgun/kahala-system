@@ -1,10 +1,11 @@
 package com.bol.kahala.service.impl;
 
 import com.bol.kahala.constant.GameConstants;
+import com.bol.kahala.dto.GameDto;
+import com.bol.kahala.dto.UserDto;
 import com.bol.kahala.model.Board;
 import com.bol.kahala.model.Game;
 import com.bol.kahala.model.Player;
-import com.bol.kahala.model.User;
 import com.bol.kahala.repository.GameRepository;
 import com.bol.kahala.service.GameService;
 import com.bol.kahala.service.UserService;
@@ -42,7 +43,7 @@ public class GameServiceImpl implements GameService {
         // Initialize the game with the board and the current user as the first user
         Board firstPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
         Board secondPlayerBoard = new Board(new ArrayList<>(Collections.nCopies(SMALL_PIT_NUMBER, SEED_COUNT)), initialBigPit);
-       logInfo("Created game boards");
+        logInfo("Created game boards");
 
         Player firstPlayer = Player.builder()
                 .isCurrentTurn(true)
@@ -54,7 +55,7 @@ public class GameServiceImpl implements GameService {
                 .isCurrentTurn(false)
                 .userId(secondPlayerId)
                 .build();
-       logInfo("Created game players");
+        logInfo("Created game players");
 
         Game game = Game.builder()
                 .firstPlayer(firstPlayer)
@@ -62,7 +63,7 @@ public class GameServiceImpl implements GameService {
                 .isFinished(false)
                 .activePlayerId(firstPlayer.getUserId())
                 .build();
-       logInfo("Created game");
+        logInfo("Created game");
 
         return game;
     }
@@ -79,12 +80,14 @@ public class GameServiceImpl implements GameService {
 
         validateCreateGameServiceInput(input);
 
-        Game game = createInitialGameInstance(input.getFirstPlayerId(), input.getSecondPlayerId());
+        Game game = createInitialGameInstance(input.getFirstPlayerId(),
+                input.getSecondPlayerId());
 
         gameRepository.save(game);
-       logInfo("Saved game");
+        logInfo("Saved game");
 
-        return CreateGameServiceOutput.builder().game(game).build();
+        return CreateGameServiceOutput.builder()
+                .game(GameDto.toDto(game)).build();
     }
 
     /**
@@ -97,7 +100,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public GameStatusServiceOutput getGame(GameStatusServiceInput input) {
         Game game = getGame(input.getGameId());
-        return GameStatusServiceOutput.builder().game(game).build();
+        return GameStatusServiceOutput.builder().game(GameDto.toDto(game)).build();
     }
 
     /**
@@ -117,9 +120,9 @@ public class GameServiceImpl implements GameService {
 
         // Save the initial game instance to the repository
         gameRepository.save(initialGameInstance);
-       logInfo("Saved game");
+        logInfo("Saved game");
         // Return the reset game as output
-        return GameResetServiceOutput.builder().game(initialGameInstance).build();
+        return GameResetServiceOutput.builder().game(GameDto.toDto(initialGameInstance)).build();
     }
 
     /**
@@ -137,7 +140,7 @@ public class GameServiceImpl implements GameService {
         Game game = getGame(input.getGameId());
 
         // Validate that the provided player is the active player in the game
-        validateActivePlayer(input.getMovement().getPlayerId(), game.getActivePlayerId());
+        validateActivePlayer(input.getMovementDto().getPlayerId(), game.getActivePlayerId());
 
         // Determine the current player and opponent player based on the turn
         Player currentPlayer;
@@ -154,8 +157,9 @@ public class GameServiceImpl implements GameService {
         List<Integer> currentPlayerSmallPits = currentPlayer.getBoard().getSmallPits();
         List<Integer> opponentPlayerSmallPits = opponentPlayer.getBoard().getSmallPits();
 
-        int currentPitIndex = input.getMovement().getPosition() - 1;
+        int currentPitIndex = input.getMovementDto().getPosition() - 1;
         int stonesInHand = currentPlayerSmallPits.get(currentPitIndex);
+        //Player get stones to the hand
         currentPlayerSmallPits.set(currentPitIndex, 0);
 
         // Distribute the stones in the hand to the pits based on game rules
@@ -167,35 +171,33 @@ public class GameServiceImpl implements GameService {
                 //currentPitIndex is player big pit's index
                 if (currentPitIndex == GameConstants.SMALL_PIT_NUMBER) {
                     currentPlayer.getBoard().increaseBigPit();
-                   logInfo("Increased player big pit. PlayerId: {}", currentPlayer.getUserId());
+                    logInfo("Increased player big pit. PlayerId: {}", currentPlayer.getUserId());
                 } else {
-
-                    //currentPitIndex is in the player small pits
+                    //currentPitIndex is in the current player's small pits
                     if (currentPitIndex < GameConstants.SMALL_PIT_NUMBER) {
                         currentPlayerSmallPits.set(currentPitIndex,
                                 currentPlayerSmallPits.get(currentPitIndex) + 1);
-                       logInfo("Increased current player's small pit. Small pit index: {} PlayerId: {}",
+                        logInfo("Increased current player's small pit. Small pit index: {} PlayerId: {}",
                                 currentPitIndex, currentPlayer.getUserId());
-
                     }
-                    //currentPitIndex is in the opponent small pits
+                    //currentPitIndex is in the opponent player's small pits
                     else {
                         int opponentPitIndex = currentPitIndex - GameConstants.SMALL_PIT_NUMBER - 1;
                         opponentPlayerSmallPits.set(opponentPitIndex,
                                 opponentPlayer.getBoard().getSmallPits().get(opponentPitIndex) + 1);
-                       logInfo("Increased opponent player's small pit. Small pit index: {} -  PlayerId: {}",
+                        logInfo("Increased opponent player's small pit. Small pit index: {} -  PlayerId: {}",
                                 opponentPitIndex, currentPlayer.getUserId());
                     }
                 }
                 stonesInHand--;
-               logInfo("Decreased stonesInHand: {} - PlayerId: {}",
+                logInfo("Decreased stonesInHand: {} - PlayerId: {}",
                         stonesInHand, currentPlayer.getUserId());
             }
         }
 
-        // Handle capturing of stones based on game rules
-        int capturedStones = handleStoneCaptures(currentPitIndex, currentPlayerSmallPits, opponentPlayerSmallPits);
-       logInfo("capturedStones from opponent player. capturedStones: {} - PlayerId: {}",
+        // Capture opponent player's stones based on the game rule
+        int capturedStones = handleCapturedStone(currentPitIndex, currentPlayerSmallPits, opponentPlayerSmallPits);
+        logInfo("capturedStones from opponent player. capturedStones: {} - PlayerId: {}",
                 capturedStones, currentPlayer.getUserId());
         // Update the game board with the modified pit configurations
         updateGameBoard(game,
@@ -203,7 +205,7 @@ public class GameServiceImpl implements GameService {
                 currentPlayer.getBoard().getBigPit() + capturedStones,
                 opponentPlayerSmallPits);
 
-       logInfo("Updated board. currentPlayerSmallPits: {} - opponentPlayerSmallPits: {}  - PlayerId: {}",
+        logInfo("Updated board. currentPlayerSmallPits: {} - opponentPlayerSmallPits: {}  - PlayerId: {}",
                 currentPlayerSmallPits, opponentPlayerSmallPits, currentPlayer.getUserId());
 
         // Check if the game has finished
@@ -212,23 +214,22 @@ public class GameServiceImpl implements GameService {
         if (!gameFinished) {
             // Find the ID of the next active player
             activePlayerId = findActivePlayerId(game, currentPitIndex);
-           logInfo("activePlayerId : {}", activePlayerId);
+            logInfo("activePlayerId : {}", activePlayerId);
         }
-       
+
         logInfo("isGameFinished : {}", gameFinished);
 
         // Update the game status and save it to the repository
         updateGameStatus(game, activePlayerId, gameFinished);
         gameRepository.save(game);
 
-       logInfo("Saved game. gameId : {}", game.getGameId());
+        logInfo("Saved game. gameId : {}", game.getGameId());
 
         // Return the updated game state as output
         return MoveGameServiceOutput.builder()
-                .game(game)
+                .game(GameDto.toDto(game))
                 .build();
     }
-
 
 
     private void updateGameBoard(Game game,
@@ -255,32 +256,31 @@ public class GameServiceImpl implements GameService {
         }
 
         UserServiceOutput serviceOutputFirstUser = userService.getUser(UserServiceInput.builder().userId(input.getFirstPlayerId()).build());
-        User firstUser = serviceOutputFirstUser.getUser();
+        UserDto firstUser = serviceOutputFirstUser.getUser();
         if (firstUser == null) {
             throw new InvalidPlayerException(validationMessagesUtil.getExceptionMessage(
                     INVALID_PLAYER_EXCEPTION_PLAYER_NOT_FOUND_MESSAGE, input.getFirstPlayerId()));
         }
 
         UserServiceOutput serviceOutputSecondUser = userService.getUser(UserServiceInput.builder().userId(input.getSecondPlayerId()).build());
-        User secondUser = serviceOutputSecondUser.getUser();
+        UserDto secondUser = serviceOutputSecondUser.getUser();
         if (secondUser == null) {
             throw new InvalidPlayerException(validationMessagesUtil.getExceptionMessage(
                     INVALID_PLAYER_EXCEPTION_PLAYER_NOT_FOUND_MESSAGE, input.getSecondPlayerId()));
         }
-       logInfo("Validated inputs: validateCreateGameServiceInput");
+        logInfo("Validated inputs: validateCreateGameServiceInput");
     }
 
     private Game getGame(String gameId) {
         Optional<Game> optionalGame = gameRepository.findById(gameId);
         if (optionalGame.isPresent()) {
-           logInfo("Loaded the game");
+            logInfo("Loaded the game");
             return optionalGame.get();
         } else {
-           logInfo("Invalid gameId: {}", gameId);
+            logInfo("Invalid gameId: {}", gameId);
             throw new InvalidGameException(validationMessagesUtil.getExceptionMessage(
                     INVALID_GAME_EXCEPTION_GAME_NOT_FOUND_MESSAGE, gameId));
         }
-
     }
 
     private void validateActivePlayer(String playerId, String activePlayerId) {
@@ -288,7 +288,7 @@ public class GameServiceImpl implements GameService {
             throw new InvalidPlayerException(validationMessagesUtil.getExceptionMessage(
                     INVALID_PLAYER_EXCEPTION_NOT_ACTIVE_PLAYER_MESSAGE, playerId));
         }
-       logInfo("Validated inputs : validateActivePlayer");
+        logInfo("Validated inputs : validateActivePlayer");
     }
 
     /**
@@ -299,7 +299,7 @@ public class GameServiceImpl implements GameService {
      * @param opponentPlayerSmallPits The list of stones in the opponent player's small pits.
      * @return The number of stones captured during this move.
      */
-    private int handleStoneCaptures(int currentPitIndex, List<Integer> currentPlayerSmallPits, List<Integer> opponentPlayerSmallPits) {
+    private int handleCapturedStone(int currentPitIndex, List<Integer> currentPlayerSmallPits, List<Integer> opponentPlayerSmallPits) {
         // Initialize the count of captured stones
         int capturedStones = 0;
 
@@ -314,13 +314,13 @@ public class GameServiceImpl implements GameService {
             currentPlayerSmallPits.set(currentPitIndex, 0);
 
             // Log captured stones and pit states
-           logInfo("Captured {} stones from pit {} and pit {}", capturedStones, currentPitIndex, oppositeIndex);
-           logInfo("Updated pit states after capture: Current Player: {}, Opponent Player: {}",
+            logInfo("Captured {} stones from pit {} and pit {}", capturedStones, currentPitIndex, oppositeIndex);
+            logInfo("Updated pit states after capture: Current Player: {}, Opponent Player: {}",
                     currentPlayerSmallPits, opponentPlayerSmallPits);
         }
 
         // Log the count of captured stones
-       logInfo("Captured {} stones in total", capturedStones);
+        logInfo("Captured {} stones in total", capturedStones);
 
         // Return the count of captured stones
         return capturedStones;

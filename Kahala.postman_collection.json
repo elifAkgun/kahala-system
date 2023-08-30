@@ -4,7 +4,7 @@
 		"name": "Kahala",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "15992895",
-		"_collection_link": "https://elif-team.postman.co/workspace/79636566-3e5a-4f4e-91fc-283d483bdee1/collection/15992895-54b40de0-0c3c-479e-966e-edaf27888510?action=share&source=collection_link&creator=15992895"
+		"_collection_link": "https://elif-team.postman.co/workspace/New-Team-Workspace~79636566-3e5a-4f4e-91fc-283d483bdee1/collection/15992895-54b40de0-0c3c-479e-966e-edaf27888510?action=share&source=collection_link&creator=15992895"
 	},
 	"item": [
 		{
@@ -118,7 +118,7 @@
 		{
 			"name": "Move",
 			"request": {
-				"method": "POST",
+				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
@@ -148,7 +148,7 @@
 		{
 			"name": "Reset Game",
 			"request": {
-				"method": "PUT",
+				"method": "DELETE",
 				"header": [],
 				"body": {
 					"mode": "raw",

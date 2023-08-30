@@ -1,22 +1,18 @@
-package com.bol.kahala.model;
+package com.bol.kahala.dto;
 
+import com.bol.kahala.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
 
 /**
  * This class represents a user in the system.
  */
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 @Builder
-@EqualsAndHashCode
-@ToString
-@RedisHash("user")
-public class User {
+public class UserDto {
 
     /**
      * The unique identifier of the user.
@@ -33,6 +29,15 @@ public class User {
     /**
      * The password of the user.
      */
+    @JsonIgnore
     private String password;
+
+    public static UserDto toDto(User createdUser) {
+        return UserDto.builder()
+                .userId(createdUser.getUserId())
+                .userName(createdUser.getUserName())
+                .password(createdUser.getPassword())
+                .build();
+    }
 }
 

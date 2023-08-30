@@ -1,6 +1,6 @@
 package com.bol.kahala.controller.response;
 
-import com.bol.kahala.model.User;
+import com.bol.kahala.dto.UserDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,5 +17,5 @@ public class UserResponse implements Serializable {
     /**
      * The user object associated with the response.
      */
-    private User user;
+    private UserDto user;
 }

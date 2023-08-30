@@ -1,6 +1,6 @@
 package com.bol.kahala.controller.response;
 
-import com.bol.kahala.model.Game;
+import com.bol.kahala.dto.GameDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,5 +17,5 @@ public class GameResponse implements Serializable {
     /**
      * The game object associated with the response.
      */
-    private Game game;
+    private GameDto game;
 }

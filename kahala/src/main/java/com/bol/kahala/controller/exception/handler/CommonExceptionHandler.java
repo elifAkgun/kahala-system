@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Optional;
 
+import static com.bol.kahala.util.LoggingUtil.logError;
+
 /**
  * This class serves as a global exception handler for common exceptions that can occur
  * across the application. It provides handling for validation errors, invalid format errors,
@@ -35,7 +37,7 @@ public class CommonExceptionHandler {
      * Utility method to extract error details from an ObjectError and create a
      * MethodArgumentNotValidErrorResponse instance.
      */
-    private static MethodArgumentNotValidErrorResponse getErrorDto(ObjectError error) {
+    private static MethodArgumentNotValidErrorResponse getErrorToResponse(ObjectError error) {
         String field = error instanceof FieldError fieldError ? fieldError.getField() : null;
         String rejectedValue = error instanceof FieldError fieldError ? String.valueOf(fieldError.getRejectedValue()) : null;
 
@@ -57,9 +59,10 @@ public class CommonExceptionHandler {
         Optional<MethodArgumentNotValidErrorResponse> firstResponse = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
-                .map(CommonExceptionHandler::getErrorDto)
+                .map(CommonExceptionHandler::getErrorToResponse)
                 .findFirst();
 
+        logError("An error occurred:", ex);
         return firstResponse.orElseGet(() -> new MethodArgumentNotValidErrorResponse(UNDEFINED,
                 UNDEFINED, UNDEFINED, AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER));
     }
@@ -72,7 +75,7 @@ public class CommonExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseBody
     public ErrorResponse handleInvalidFormatExceptions(HttpMessageNotReadableException ex) {
-        log.error("An error occurred:", ex);
+        logError("An error occurred:", ex);
         return new ErrorResponse(INVALID_JSON_BODY);
     }
 
@@ -84,7 +87,7 @@ public class CommonExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     @ResponseBody
     public ErrorResponse handleValidationExceptions(RuntimeException ex) {
-        log.error("An error occurred:", ex);
+        logError("An error occurred:", ex);
         return new ErrorResponse(AN_ERROR_HAPPENED_PLEASE_TRY_AGAIN_LATER);
     }
 }

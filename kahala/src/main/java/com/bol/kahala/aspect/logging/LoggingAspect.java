@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.UUID;
 
+import static com.bol.kahala.util.LoggingUtil.logError;
 import static com.bol.kahala.util.LoggingUtil.logInfo;
 
 @Configuration
@@ -36,7 +37,7 @@ public class LoggingAspect {
             throwing = "exception"
     )
     public void logMethodCallAfterException(JoinPoint joinPoint, Exception exception) {
-        logInfo("AfterThrowing Aspect - {} has thrown an exception {}"
+        logError("AfterThrowing Aspect - {} has thrown an exception {}"
                 , joinPoint, exception);
     }
 

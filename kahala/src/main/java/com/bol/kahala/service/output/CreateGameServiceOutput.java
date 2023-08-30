@@ -1,6 +1,6 @@
 package com.bol.kahala.service.output;
 
-import com.bol.kahala.model.Game;
+import com.bol.kahala.dto.GameDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -17,6 +17,6 @@ public class CreateGameServiceOutput {
     /**
      * The game instance that was created.
      */
-    private Game game;
+    private GameDto game;
 }
 

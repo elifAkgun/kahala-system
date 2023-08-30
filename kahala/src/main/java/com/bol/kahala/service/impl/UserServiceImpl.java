@@ -1,5 +1,6 @@
 package com.bol.kahala.service.impl;
 
+import com.bol.kahala.dto.UserDto;
 import com.bol.kahala.model.User;
 import com.bol.kahala.repository.UserRepository;
 import com.bol.kahala.service.UserService;
@@ -34,18 +35,20 @@ public class UserServiceImpl implements UserService {
     public CreateUserServiceOutput createUser(CreateUserServiceInput input) throws UserAlreadyExistException {
         User user = input.getUser();
         Iterable<User> userRepositoryAll = userRepository.findAll();
-        userRepositoryAll.forEach(user1 -> {
-            if (user1.getUserName().equals(input.getUser().getUserName())) {
-                String errorMessage = validationMessagesUtil.getExceptionMessage(
-                        USER_ALREADY_EXIST_EXCEPTION_USER_ALREADY_EXIST_MESSAGE, user.getUserName());
-                logError("Failed to create user. User already exists: {}", errorMessage);
-                throw new UserAlreadyExistException(errorMessage);
-            }
-        });
+        if (userRepositoryAll.iterator().hasNext()) {
+            userRepositoryAll.forEach(user1 -> {
+                if (user1.getUserName().equals(input.getUser().getUserName())) {
+                    String errorMessage = validationMessagesUtil.getExceptionMessage(
+                            USER_ALREADY_EXIST_EXCEPTION_USER_ALREADY_EXIST_MESSAGE, user.getUserName());
+                    logError("Failed to create user. User already exists: {}", errorMessage);
+                    throw new UserAlreadyExistException(errorMessage);
+                }
+            });
+        }
 
         User createdUser = userRepository.save(user);
         logInfo("User created successfully: {}", createdUser);
-        return CreateUserServiceOutput.builder().user(createdUser).build();
+        return CreateUserServiceOutput.builder().user(UserDto.toDto(createdUser)).build();
     }
 
     @Override
@@ -54,7 +57,7 @@ public class UserServiceImpl implements UserService {
         if (optionalUser.isPresent()) {
             User retrievedUser = optionalUser.get();
             logInfo("Retrieved user information: {}", retrievedUser);
-            return UserServiceOutput.builder().user(retrievedUser).build();
+            return UserServiceOutput.builder().user(UserDto.toDto(retrievedUser)).build();
         } else {
             String errorMessage = validationMessagesUtil.getExceptionMessage(
                     INVALID_USER_EXCEPTION_USER_NOT_FOUND_MESSAGE, input.getUserId());

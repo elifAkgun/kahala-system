@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static com.bol.kahala.helper.GameTestDataHelper.GAME_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(GameController.class)
@@ -40,7 +40,7 @@ class CommonRequestTest {
                 .willReturn(GameStatusServiceOutput.builder().game(null).build());
 
         // When and Then
-        mockMvc.perform(post("/games/move/{gameId}", GAME_ID)
+        mockMvc.perform(put("/games/move/{gameId}", GAME_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(malformedJson))
                 .andExpect(status().isBadRequest());

@@ -48,7 +48,7 @@ class GameRepositoryInMemoryImplTest {
     @Test
     @DisplayName("Test saving a new game")
     void givenNewGame_whenSaveGame_thenGameIsSaved() {
-        Game game = new Game();
+        Game game =Game.builder().build();
         inMemoryGameRepository.save(game);
 
         assertNotNull(game.getGameId());
@@ -59,7 +59,7 @@ class GameRepositoryInMemoryImplTest {
     @DisplayName("Test finding an existing game by ID")
     void givenExistingGameId_whenFindGameById_thenGameIsFound() {
         String gameId = UUID.randomUUID().toString();
-        Game game = new Game();
+        Game game = Game.builder().build();
         game.setGameId(gameId);
         inMemoryGameRepository.save(game);
 

@@ -1,6 +1,6 @@
 package com.bol.kahala.service.output;
 
-import com.bol.kahala.model.Game;
+import com.bol.kahala.dto.GameDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -17,5 +17,5 @@ public class MoveGameServiceOutput {
     /**
      * The updated game instance after a player's move.
      */
-    private Game game;
+    private GameDto game;
 }

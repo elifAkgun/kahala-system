@@ -1,18 +1,15 @@
 package com.bol.kahala.model;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.io.Serializable;
 
 /**
  * This class represents a player in the game.
  */
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 @Builder
-@ToString
 public class Player implements Serializable {
 
     /**
