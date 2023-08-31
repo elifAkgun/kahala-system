@@ -267,10 +267,3 @@ The "kahala-system" project is licensed under the [Apache License 2.0](https://g
 
 ---
 
-
-## Contact
-
-If you want to encourage people to reach out with support or feedback, you can include your contact information or links related to the project.
-
----
-
