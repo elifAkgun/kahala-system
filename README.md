@@ -95,7 +95,7 @@ Content-Type: application/json
 
 **Request:**
 ```http
-POST /kahala/games/move/61754050-9800-4da3-aa6e-4bec5ac7475e
+PUT /kahala/games/move/61754050-9800-4da3-aa6e-4bec5ac7475e
 Content-Type: application/json
 
 {
@@ -108,7 +108,7 @@ Content-Type: application/json
 
 **Request:**
 ```http
-PUT /kahala/games/1f94845d-e44c-4329-9eb1-6358a7fa80cd
+DELETE /kahala/games/1f94845d-e44c-4329-9eb1-6358a7fa80cd
 ```
 
 ## Requirements
@@ -249,6 +249,13 @@ To run the "kahala-system" Spring project, follow the steps below:
 Please ensure that you have the required JDK version and Git installed before proceeding with the installation. The provided commands assume you're using a Unix-like terminal. Adjust the commands accordingly if you're using a different environment. You can also use [Kahala.postman_collection](https://github.com/elifAkgun/kahala-system/blob/main/Kahala.postman_collection.json).
 
 ---
+
+You can also play the game with this swagger-ui http://localhost:9090/kahala/swagger-ui/index.html
+
+![swagger-ui](https://github.com/elifAkgun/kahala-system/blob/main/swagger-ui.png)
+
+---
+
 
 This guide provides step-by-step instructions to clone, build, and run the "kahala-system" Spring project on your local machine.
 
